@@ -40,9 +40,9 @@
             "exec": [
               "const f = JSON.parse(pm.collectionVariables.get('findings'));",
               "const body = pm.response.text();",
-              "const leaked = pm.response.code === 200 && /\\\"owner\\\"\\s*:\\s*\\\"bob\\\"/.test(body);",
+              "const leaked = pm.response.code === 200 && /\\\"owner\\\"\\s*:\\s*\\\"bob\\\"/i.test(body);",
               "if (leaked) f.push({tool:'postman', id:'VULN-BOLA-01', route:'/api/orders/2', class:'Broken Object Level Authorization', severity:'High'});",
-              "const card = /card_last4/.test(body);",
+              "const card = /card_last4/i.test(body);",
               "if (card) f.push({tool:'postman', id:'VULN-BOLA-02', route:'/api/orders/2', class:'Excessive Data Exposure', severity:'Medium'});",
               "pm.collectionVariables.set('findings', JSON.stringify(f));",
               "pm.test('BOLA nao deve permitir acesso cruzado', () => pm.expect(leaked, 'alice leu pedido de bob').to.be.false);"
