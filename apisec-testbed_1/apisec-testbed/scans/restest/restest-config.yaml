@@ -1,0 +1,14 @@
+# Configuracao RESTest (https://github.com/isa-group/RESTest)
+# Fuzzing orientado a especificacao OpenAPI + oraculos de seguranca.
+specPath: /openapi/target-api.yaml
+testerClass: security
+baseURI: http://gateway:8080
+numTotalNestedScenarios: 500
+faultyRatio: 0.4          # 40% de casos maliciosos/borda
+enableInputCoverage: true
+enableOutputCoverage: true
+oracles:
+  - statusCode5xx         # 5xx = candidato a falha de robustez / injecao
+  - responseTimeAnomaly   # picos = candidato a SQLi time-based / DoS
+  - authorizationBypass   # 2xx em recurso de outro dono = BOLA
+reportPath: /results/restest-REPORT_PROFILE.csv

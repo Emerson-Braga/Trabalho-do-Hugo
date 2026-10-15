@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Target API (SUT)
+  description: Microsservico alvo do testbed de benchmarking de seguranca de APIs
+  version: 1.0.0
+servers:
+  - url: http://gateway:8080
+    description: via API Gateway (dentro da rede docker)
+  - url: http://localhost:8080
+    description: via API Gateway (host)
+paths:
+  /api/auth/login:
+    post:
+      operationId: login
+      summary: Autenticacao (retorna token de servico)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string, example: alice }
+                password: { type: string, example: alice123 }
+      responses:
+        "200": { description: OK }
+        "401": { description: Credenciais invalidas }
+  /api/products:
+    get:
+      operationId: listProducts
+      summary: Lista de produtos
+      responses:
+        "200": { description: OK }
+  /api/products/search:
+    get:
+      operationId: searchProducts
+      summary: Busca de produtos (parametro sujeito a SQLi no perfil vulneravel)
+      parameters:
+        - { name: q,     in: query, schema: { type: string }, example: "roteador" }
+        - { name: order, in: query, schema: { type: string }, example: "name" }
+      responses:
+        "200": { description: OK }
+  /api/products/{id}:
+    get:
+      operationId: getProduct
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string }, example: "1" }
+      responses:
+        "200": { description: OK }
+  /api/orders:
+    get:
+      operationId: listOrders
+      summary: Pedidos (deveria ser escopado ao dono - BOLA no perfil vulneravel)
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: OK }
+  /api/orders/{id}:
+    get:
+      operationId: getOrder
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer }, example: 2 }
+      responses:
+        "200": { description: OK }
+        "404": { description: Nao encontrado }
+  /api/debug/config:
+    get:
+      operationId: debugConfig
+      summary: Diagnostico (misconfiguration no perfil vulneravel)
+      responses:
+        "200": { description: OK }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,49 @@
+server:
+  port: 8081
+  error:
+    # Perfil vulneravel expoe stack trace; sobrescrito para "never" no compose protegido
+    include-stacktrace: ${ERROR_STACKTRACE:always}
+    include-message: always
+
+spring:
+  application:
+    name: target-service
+  datasource:
+    url: jdbc:h2:mem:targetdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  sql:
+    init:
+      mode: always
+
+# ---- Variavel independente do experimento -------------------------------
+# Perfil VULNERAVEL: todas true | Perfil PROTEGIDO: todas false
+vuln:
+  bola:              ${VULN_BOLA:true}
+  sql-injection:     ${VULN_SQLI:true}
+  broken-auth:       ${VULN_BROKEN_AUTH:true}
+  misconfiguration:  ${VULN_MISCONFIG:true}
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Perfil vulneravel: superficie de actuator totalmente aberta (API8)
+        include: ${ACTUATOR_EXPOSE:*}
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: target-service
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

@@ -1,0 +1,158 @@
+# Testbed de benchmarking empirico de seguranca de APIs em microsservicos
+# Unifesspa - Seguranca em Redes de Computadores - 2026
+#
+# Dois perfis experimentais, controlados por .env:
+#   make up-vuln       -> SUT sem estrategias de defesa   (condicao de controle)
+#   make up-protected  -> SUT com Gateway+Keycloak+Spring Security ativos
+name: apisec-testbed
+
+networks:
+  edge:      # rede exposta as ferramentas de teste
+  internal:  # rede interna: microsservico e banco nao sao alcancaveis diretamente
+    internal: true
+  telemetry:
+
+volumes:
+  grafana-data:
+  prometheus-data:
+
+services:
+
+  # ---------------------------------------------------------------- IAM
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.3
+    container_name: apisec-keycloak
+    command: ["start-dev", "--import-realm", "--health-enabled=true", "--metrics-enabled=true"]
+    environment:
+      KEYCLOAK_ADMIN: ${KC_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:-admin}
+      KC_HTTP_PORT: 8080
+      KC_HOSTNAME_STRICT: "false"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    ports:
+      - "8083:8080"
+    networks: [edge, internal, telemetry]
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 && echo -e 'GET /health/ready HTTP/1.1\\nHost: localhost\\nConnection: close\\n\\n' >&3 && cat <&3 | grep -q '\"UP\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
+  # ------------------------------------------------- rate limiter backend
+  redis:
+    image: redis:7-alpine
+    container_name: apisec-redis
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  # ------------------------------------------------ microsservico alvo (SUT)
+  target-service:
+    build: ./services/target-service
+    container_name: apisec-target
+    environment:
+      # variavel independente do experimento (ver .env)
+      VULN_BOLA:        ${VULN_BOLA:-true}
+      VULN_SQLI:        ${VULN_SQLI:-true}
+      VULN_BROKEN_AUTH: ${VULN_BROKEN_AUTH:-true}
+      VULN_MISCONFIG:   ${VULN_MISCONFIG:-true}
+      ERROR_STACKTRACE: ${ERROR_STACKTRACE:-always}
+      ACTUATOR_EXPOSE:  ${ACTUATOR_EXPOSE:-*}
+      JWT_SECRET:       ${JWT_SECRET:-}
+    networks: [internal, telemetry]
+    # NAO publica porta: so e alcancavel atraves do gateway.
+    # Para a condicao "sem gateway", descomente a linha abaixo.
+    # ports: ["8081:8081"]
+    deploy:
+      resources:
+        limits:   { cpus: "1.0", memory: 1g }   # teto fixo -> medidas de CPU/RAM comparaveis
+        reservations: { memory: 512m }
+    depends_on:
+      keycloak: { condition: service_healthy }
+
+  # ----------------------------------------------- camada de defesa: gateway
+  gateway:
+    build: ./services/gateway
+    container_name: apisec-gateway
+    environment:
+      GATEWAY_ENFORCE:  ${GATEWAY_ENFORCE:-false}
+      TARGET_URI:       http://target-service:8081
+      KEYCLOAK_ISSUER:  http://keycloak:8080/realms/apisec
+      KEYCLOAK_JWKS:    http://keycloak:8080/realms/apisec/protocol/openid-connect/certs
+      REDIS_HOST:       redis
+      RATE_LIMIT_RPS:   ${RATE_LIMIT_RPS:-50}
+      RATE_LIMIT_BURST: ${RATE_LIMIT_BURST:-100}
+    ports:
+      - "8080:8080"          # unico ponto de entrada exposto as ferramentas
+    networks: [edge, internal, telemetry]
+    deploy:
+      resources:
+        limits: { cpus: "1.0", memory: 1g }
+    depends_on:
+      target-service: { condition: service_started }
+      redis:          { condition: service_healthy }
+
+  # --------------------------------------------------------- telemetria
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: apisec-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=30d
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports: ["9090:9090"]
+    networks: [telemetry]
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: apisec-cadvisor
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports: ["8084:8080"]
+    networks: [telemetry]
+
+  grafana:
+    image: grafana/grafana:10.4.3
+    container_name: apisec-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports: ["3000:3000"]
+    networks: [telemetry]
+    depends_on: [prometheus]
+
+  # -------------------------------------------------- ferramentas de teste
+  # Executadas sob demanda (profile "tools"), nunca junto com o SUT em regime,
+  # para nao contaminar as medidas de CPU/RAM do alvo.
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: apisec-zap
+    profiles: ["tools"]
+    volumes:
+      - ./scans:/zap/wrk:rw
+      - ./results:/zap/results:rw
+    networks: [edge]
+
+  newman:
+    image: postman/newman:6-alpine
+    container_name: apisec-newman
+    profiles: ["tools"]
+    volumes:
+      - ./scans:/etc/newman:rw
+      - ./results:/results:rw
+    networks: [edge]

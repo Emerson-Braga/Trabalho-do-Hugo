@@ -1,0 +1,4 @@
+.env
+services/*/target/
+results/*
+!results/.gitkeep

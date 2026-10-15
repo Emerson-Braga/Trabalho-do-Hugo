@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 5s      # granularidade fina: as varreduras duram poucos minutos
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: gateway
+    metrics_path: /actuator/prometheus
+    static_configs: [{ targets: ["gateway:8080"], labels: { component: "gateway" } }]
+
+  - job_name: target-service
+    metrics_path: /actuator/prometheus
+    static_configs: [{ targets: ["target-service:8081"], labels: { component: "sut" } }]
+
+  - job_name: cadvisor        # CPU/RAM por container (Etapa C do plano)
+    static_configs: [{ targets: ["cadvisor:8080"] }]
+
+  - job_name: keycloak
+    metrics_path: /metrics
+    static_configs: [{ targets: ["keycloak:8080"], labels: { component: "iam" } }]

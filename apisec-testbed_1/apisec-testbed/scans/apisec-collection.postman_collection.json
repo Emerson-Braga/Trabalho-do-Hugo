@@ -1,0 +1,113 @@
+{
+  "info": {
+    "name": "APISec Testbed - Testes de Logica e Autorizacao",
+    "description": "Suite Postman/Newman que cobre falhas que DAST caixa-preta nao pega sozinho: BOLA, excessive data exposure, brute force e user enumeration. Cada teste grava um alerta normalizado em results/postman-findings.json via variavel de colecao.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://gateway:8080" },
+    { "key": "alice_token", "value": "" },
+    { "key": "findings", "value": "[]" }
+  ],
+  "item": [
+    {
+      "name": "login alice",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const j = pm.response.json();",
+              "if (j.access_token) pm.collectionVariables.set('alice_token', j.access_token);",
+              "pm.test('login 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"username\":\"alice\",\"password\":\"alice123\"}" },
+        "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api","auth","login"] }
+      }
+    },
+    {
+      "name": "BOLA - alice le pedido de bob",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const f = JSON.parse(pm.collectionVariables.get('findings'));",
+              "const body = pm.response.text();",
+              "const leaked = pm.response.code === 200 && /\\\"owner\\\"\\s*:\\s*\\\"bob\\\"/.test(body);",
+              "if (leaked) f.push({tool:'postman', id:'VULN-BOLA-01', route:'/api/orders/2', class:'Broken Object Level Authorization', severity:'High'});",
+              "const card = /card_last4/.test(body);",
+              "if (card) f.push({tool:'postman', id:'VULN-BOLA-02', route:'/api/orders/2', class:'Excessive Data Exposure', severity:'Medium'});",
+              "pm.collectionVariables.set('findings', JSON.stringify(f));",
+              "pm.test('BOLA nao deve permitir acesso cruzado', () => pm.expect(leaked, 'alice leu pedido de bob').to.be.false);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{alice_token}}" }],
+        "url": { "raw": "{{base_url}}/api/orders/2", "host": ["{{base_url}}"], "path": ["api","orders","2"] }
+      }
+    },
+    {
+      "name": "Brute force - sem lockout",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": { "exec": [ "pm.variables.set('attempt', (pm.variables.get('attempt')||0));" ] }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const f = JSON.parse(pm.collectionVariables.get('findings'));",
+              "if (pm.response.code !== 429) {",
+              "  if(!f.find(x=>x.id==='VULN-AUTH-01')) f.push({tool:'postman', id:'VULN-AUTH-01', route:'/api/auth/login', class:'Broken Authentication - no rate limit', severity:'High'});",
+              "}",
+              "const b = pm.response.text();",
+              "if (/usuario inexistente|senha incorreta/.test(b) && !f.find(x=>x.id==='VULN-AUTH-02'))",
+              "  f.push({tool:'postman', id:'VULN-AUTH-02', route:'/api/auth/login', class:'User Enumeration', severity:'Low'});",
+              "pm.collectionVariables.set('findings', JSON.stringify(f));",
+              "pm.test('brute force deve ser bloqueado (429)', () => pm.expect(pm.response.code).to.eql(429));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"username\":\"alice\",\"password\":\"senha-errada-{{$randomInt}}\"}" },
+        "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api","auth","login"] }
+      }
+    },
+    {
+      "name": "Misconfig - debug/config exposto",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const f = JSON.parse(pm.collectionVariables.get('findings'));",
+              "if (pm.response.code === 200 && /jwt_secret/.test(pm.response.text()))",
+              "  f.push({tool:'postman', id:'VULN-MISC-01', route:'/api/debug/config', class:'Security Misconfiguration', severity:'High'});",
+              "pm.collectionVariables.set('findings', JSON.stringify(f));",
+              "pm.test('endpoint de debug deve estar bloqueado', () => pm.expect(pm.response.code).to.not.eql(200));",
+              "console.log('POSTMAN_FINDINGS_JSON=' + pm.collectionVariables.get('findings'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{base_url}}/api/debug/config", "host": ["{{base_url}}"], "path": ["api","debug","config"] }
+      }
+    }
+  ]
+}

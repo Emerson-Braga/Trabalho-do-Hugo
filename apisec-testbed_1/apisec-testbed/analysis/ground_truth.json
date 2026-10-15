@@ -1,0 +1,196 @@
+{
+  "_comment": "Gabarito das vulnerabilidades injetadas no perfil VULNERAVEL. Serve de referencia para o calculo de TPR/FPR: um alerta de ferramenta e True Positive se casar com um destes ids (por rota + classe), False Positive caso contrario. No perfil PROTEGIDO, o gabarito esperado e vazio (qualquer alerta de vuln injetada e regressao).",
+  "owasp_api_top10_ref": "https://owasp.org/API-Security/editions/2023/en/0x00-header/",
+  "injected": [
+    {
+      "id": "VULN-SQLI-01",
+      "owasp": "API8:2023",
+      "cwe": "CWE-89",
+      "class": "SQL Injection",
+      "route": "/api/products/search",
+      "param": "q",
+      "evidence": "payload ' OR '1'='1 retorna todas as linhas; UNION SELECT vaza colunas",
+      "zap_alert_ids": [
+        40018,
+        40019,
+        40020,
+        40021,
+        40024
+      ],
+      "detectable_by": [
+        "zap",
+        "restest"
+      ],
+      "match_keywords": [
+        "sql",
+        "injection",
+        "sqli"
+      ]
+    },
+    {
+      "id": "VULN-SQLI-02",
+      "owasp": "API8:2023",
+      "cwe": "CWE-89",
+      "class": "SQL Injection",
+      "route": "/api/products/{id}",
+      "param": "id",
+      "evidence": "id=1 OR 1=1 ; injecao numerica",
+      "zap_alert_ids": [
+        40018,
+        40019,
+        40020,
+        40021
+      ],
+      "detectable_by": [
+        "zap",
+        "restest"
+      ],
+      "match_keywords": [
+        "sql",
+        "injection",
+        "sqli"
+      ]
+    },
+    {
+      "id": "VULN-BOLA-01",
+      "owasp": "API1:2023",
+      "cwe": "CWE-639",
+      "class": "Broken Object Level Authorization",
+      "route": "/api/orders/{id}",
+      "param": "id",
+      "evidence": "token de alice acessa pedido 2 (dono=bob)",
+      "zap_alert_ids": [],
+      "detectable_by": [
+        "restest",
+        "postman"
+      ],
+      "note": "IDOR/BOLA e dificilmente detectavel por DAST caixa-preta sem oraculo de autorizacao; capturado por teste orientado a contrato/logica (RESTest, Postman) e nao por ZAP baseline.",
+      "match_keywords": [
+        "bola",
+        "authorization bypass",
+        "idor",
+        "object level"
+      ]
+    },
+    {
+      "id": "VULN-BOLA-02",
+      "owasp": "API3:2023",
+      "cwe": "CWE-213",
+      "class": "Excessive Data Exposure",
+      "route": "/api/orders/{id}",
+      "param": "-",
+      "evidence": "resposta inclui card_last4 que nao deveria ser exposto",
+      "zap_alert_ids": [],
+      "detectable_by": [
+        "postman",
+        "restest"
+      ],
+      "match_keywords": [
+        "excessive",
+        "data exposure",
+        "property"
+      ]
+    },
+    {
+      "id": "VULN-AUTH-01",
+      "owasp": "API2:2023",
+      "cwe": "CWE-307",
+      "class": "Broken Authentication - sem rate limit / lockout",
+      "route": "/api/auth/login",
+      "param": "password",
+      "evidence": "brute force sem bloqueio no perfil vulneravel",
+      "zap_alert_ids": [
+        10021
+      ],
+      "detectable_by": [
+        "postman",
+        "restest"
+      ],
+      "match_keywords": [
+        "rate limit",
+        "brute",
+        "lockout",
+        "authentication"
+      ]
+    },
+    {
+      "id": "VULN-AUTH-02",
+      "owasp": "API2:2023",
+      "cwe": "CWE-203",
+      "class": "User Enumeration",
+      "route": "/api/auth/login",
+      "param": "username",
+      "evidence": "mensagens distintas 'usuario inexistente' vs 'senha incorreta'",
+      "zap_alert_ids": [],
+      "detectable_by": [
+        "postman"
+      ],
+      "match_keywords": [
+        "enumeration",
+        "enum"
+      ]
+    },
+    {
+      "id": "VULN-MISC-01",
+      "owasp": "API8:2023",
+      "cwe": "CWE-16",
+      "class": "Security Misconfiguration - actuator/debug expostos",
+      "route": "/api/debug/config",
+      "param": "-",
+      "evidence": "vazamento de segredo JWT e variaveis de ambiente",
+      "zap_alert_ids": [
+        10015,
+        40035
+      ],
+      "detectable_by": [
+        "zap",
+        "postman"
+      ],
+      "match_keywords": [
+        "misconfig",
+        "debug",
+        "actuator",
+        "secret"
+      ]
+    },
+    {
+      "id": "VULN-MISC-02",
+      "owasp": "API8:2023",
+      "cwe": "CWE-942",
+      "class": "Security Misconfiguration - CORS permissivo",
+      "route": "*",
+      "param": "-",
+      "evidence": "Access-Control-Allow-Origin refletido com credenciais",
+      "zap_alert_ids": [
+        10098
+      ],
+      "detectable_by": [
+        "zap"
+      ],
+      "match_keywords": [
+        "cors"
+      ]
+    },
+    {
+      "id": "VULN-MISC-03",
+      "owasp": "API8:2023",
+      "cwe": "CWE-209",
+      "class": "Security Misconfiguration - stack trace vazado",
+      "route": "/api/debug/error",
+      "param": "-",
+      "evidence": "resposta 500 com stack trace completo",
+      "zap_alert_ids": [
+        90022,
+        10023
+      ],
+      "detectable_by": [
+        "zap"
+      ],
+      "match_keywords": [
+        "stack",
+        "error disclosure",
+        "stacktrace"
+      ]
+    }
+  ]
+}

