@@ -10,6 +10,31 @@ mkdir -p "$OUT"
 
 echo "[ZAP] perfil=$PROFILE alvo=$TARGET"
 
+# 0) sem ZAP_BEARER o scan roda sem autenticacao e as rotas protegidas voltam 401/403.
+#    Obtem um token do usuario de teste (alice) quando nenhum foi informado.
+#    Protegido: token do Keycloak (unico emissor aceito pelo gateway e pelo target).
+#    Vulneravel: login local (o gateway nao valida JWT e o target aceita o token local).
+if [ -z "${ZAP_BEARER:-}" ]; then
+  ZAP_BEARER=$(python3 - "$TARGET" "$PROFILE" <<'PY'
+import json, sys, urllib.parse, urllib.request
+base, profile = sys.argv[1], sys.argv[2]
+if profile == "protegido":
+    url = "http://keycloak:8080/realms/apisec/protocol/openid-connect/token"
+    data = urllib.parse.urlencode({"grant_type": "password", "client_id": "apisec-client",
+                                   "username": "alice", "password": "alice123"}).encode()
+    ctype = "application/x-www-form-urlencoded"
+else:
+    url = base + "/api/auth/login"
+    data = json.dumps({"username": "alice", "password": "alice123"}).encode()
+    ctype = "application/json"
+req = urllib.request.Request(url, data=data, headers={"Content-Type": ctype})
+print(json.load(urllib.request.urlopen(req, timeout=10))["access_token"])
+PY
+  ) || { echo "[ZAP] falha ao obter token de autenticacao"; exit 1; }
+  export ZAP_BEARER
+  echo "[ZAP] token de alice obtido para o replacer"
+fi
+
 # 1) importa o contrato OpenAPI para popular a arvore de rotas
 zap.sh -cmd -quickurl "$TARGET" -quickout "$OUT/_warmup.xml"
 

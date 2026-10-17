@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,7 +24,9 @@ public class SecurityConfig {
     };
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, VulnFlags flags, TokenAuthFilter tokenFilter)
+    public SecurityFilterChain filterChain(HttpSecurity http, VulnFlags flags, TokenAuthFilter tokenFilter,
+                                           JwtDecoder keycloakJwtDecoder,
+                                           JwtAuthenticationConverter keycloakAuthenticationConverter)
             throws Exception {
 
         http.csrf(csrf -> csrf.disable())   // API stateless: CSRF nao se aplica a Bearer token
@@ -42,6 +46,8 @@ public class SecurityConfig {
             // FALHA INJETADA: actuator e endpoints de debug liberados sem autenticacao
             http.authorizeHttpRequests(a -> a
                     .requestMatchers("/actuator/**", "/api/debug/**").permitAll()
+                    // o erro de /api/debug/error e redirecionado para /error; sem isto o cliente recebe 403 vazio
+                    .requestMatchers("/error").permitAll()
                     .requestMatchers(PUBLIC).permitAll()
                     .requestMatchers("/api/products/**").permitAll()
                     .anyRequest().authenticated());
@@ -59,6 +65,10 @@ public class SecurityConfig {
                     .requestMatchers("/actuator/**").hasRole("ADMIN")
                     .requestMatchers("/api/debug/**").denyAll()
                     .anyRequest().authenticated());
+            // perfil PROTEGIDO: so tokens do Keycloak (o JWT local nao e aceito aqui)
+            http.oauth2ResourceServer(o -> o.jwt(j -> j
+                    .decoder(keycloakJwtDecoder)
+                    .jwtAuthenticationConverter(keycloakAuthenticationConverter)));
         }
         return http.build();
     }

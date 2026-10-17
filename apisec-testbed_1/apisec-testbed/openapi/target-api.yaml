@@ -71,6 +71,12 @@ paths:
       summary: Diagnostico (misconfiguration no perfil vulneravel)
       responses:
         "200": { description: OK }
+  /api/debug/error:
+    get:
+      operationId: debugError
+      summary: Erro proposital (stack trace vazado no perfil vulneravel)
+      responses:
+        "500": { description: Erro interno }
 components:
   securitySchemes:
     bearerAuth:

@@ -28,6 +28,10 @@ vuln:
 security:
   jwt:
     secret: ${JWT_SECRET:}
+  # perfil PROTEGIDO: tokens do Keycloak (realm apisec). Mesmo emissor que o gateway valida.
+  keycloak:
+    issuer: ${KEYCLOAK_ISSUER:http://keycloak:8080/realms/apisec}
+    jwks-uri: ${KEYCLOAK_JWKS:http://keycloak:8080/realms/apisec/protocol/openid-connect/certs}
 
 management:
   endpoints:

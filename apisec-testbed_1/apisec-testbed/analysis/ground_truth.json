@@ -103,7 +103,7 @@
         10021
       ],
       "detectable_by": [
-        "postman",
+        "brute",
         "restest"
       ],
       "match_keywords": [

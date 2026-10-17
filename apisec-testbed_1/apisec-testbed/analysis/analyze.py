@@ -69,7 +69,7 @@ def parse_zap(path):
     return out
 
 def parse_postman(path):
-    """Le results/postman-findings.json (array normalizado gerado pela colecao)."""
+    """Le results/postman-findings-<perfil>.json (array normalizado gerado pela colecao)."""
     if not os.path.exists(path):
         return []
     with open(path) as fh:
@@ -79,6 +79,18 @@ def parse_postman(path):
             return []
     return [{"tool": "postman", "id": a.get("id"), "route": a.get("route", ""),
              "name": a.get("class", ""), "risk": a.get("severity", "")} for a in arr]
+
+def parse_brute(path):
+    """Le results/brute-force-<perfil>.json (saida de analysis/brute_force.py).
+    Gera um alerta so quando o veredito e VULN-AUTH-01 (rajada sem nenhum 429)."""
+    if not os.path.exists(path):
+        return []
+    with open(path) as fh:
+        res = json.load(fh)
+    if not res.get("achado"):
+        return []
+    return [{"tool": "brute", "id": res["achado"], "route": "/api/auth/login",
+             "name": "Broken Authentication - sem rate limit", "risk": "High"}]
 
 def parse_restest(path):
     """Le results/restest-<perfil>.csv (uma linha por caso de teste)."""
@@ -142,11 +154,19 @@ def main():
 
     R = args.results
     p = args.profile
-    tools = {
-        "zap":     parse_zap(os.path.join(R, f"zap-{p}.json")),
-        "restest": parse_restest(os.path.join(R, f"restest-{p}.csv")),
-        "postman": parse_postman(os.path.join(R, "postman-findings.json")),
+    # ferramenta sem arquivo de saida nao rodou: fica de fora das metricas (nao vira FN)
+    fontes = {
+        "zap":     (parse_zap,     os.path.join(R, f"zap-{p}.json")),
+        "restest": (parse_restest, os.path.join(R, f"restest-{p}.csv")),
+        "postman": (parse_postman, os.path.join(R, f"postman-findings-{p}.json")),
+        "brute":   (parse_brute,   os.path.join(R, f"brute-force-{p}.json")),
     }
+    tools, nao_executadas = {}, []
+    for nome, (parser, path) in fontes.items():
+        if os.path.exists(path):
+            tools[nome] = parser(path)
+        else:
+            nao_executadas.append(nome)
 
     # ---- gabarito esperado por ferramenta neste perfil
     expected = defaultdict(set)
@@ -163,12 +183,15 @@ def main():
     for tool, alerts in tools.items():
         tp_ids, fp, matched = classify(alerts, gt, tool)
         exp = expected[tool]
-        tp = len(tp_ids & exp) if exp else len(tp_ids)
-        fn = len(exp - tp_ids)
+        if exp:
+            tp, fn, regressoes = len(tp_ids & exp), len(exp - tp_ids), 0
+        else:
+            # perfil protegido: nenhuma falha e esperada; alerta que casa com vuln injetada e regressao
+            tp, fn, regressoes = 0, 0, len(tp_ids)
         recall, prec, fpr, f1 = metrics(tp, fp, fn)
         rows_metrics.append({
             "ferramenta": tool, "perfil": p,
-            "TP": tp, "FP": fp, "FN": fn,
+            "TP": tp, "FP": fp, "FN": fn, "REGRESSOES": regressoes,
             "TPR_recall": round(recall, 3), "precisao": round(prec, 3),
             "FPR_bruto": round(fpr, 3), "F1": round(f1, 3),
             "n_alertas": len(alerts),
@@ -181,12 +204,11 @@ def main():
     mpath = os.path.join(R, f"matriz-ferramenta-vulnerabilidade-{p}.csv")
     with open(mpath, "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["vuln_id", "owasp", "classe", "rota", "zap", "restest", "postman"])
+        w.writerow(["vuln_id", "owasp", "classe", "rota", "zap", "restest", "postman", "brute"])
         for vid, g in gt_index.items():
+            celula = lambda t: "N/A" if t in nao_executadas else matrix[vid].get(t, "-")
             w.writerow([vid, g["owasp"], g["class"], g["route"],
-                        matrix[vid].get("zap", "-"),
-                        matrix[vid].get("restest", "-"),
-                        matrix[vid].get("postman", "-")])
+                        celula("zap"), celula("restest"), celula("postman"), celula("brute")])
 
     # ---- metricas CSV + Markdown
     cpath = os.path.join(R, f"metricas-acuracia-{p}.csv")
@@ -197,15 +219,17 @@ def main():
     mdpath = os.path.join(R, f"metricas-acuracia-{p}.md")
     with open(mdpath, "w") as fh:
         fh.write(f"### Acuracia de deteccao - perfil {p}\n\n")
-        fh.write("| Ferramenta | TP | FP | FN | TPR (recall) | Precisao | FPR bruto | F1 |\n")
-        fh.write("|---|---|---|---|---|---|---|---|\n")
+        fh.write("| Ferramenta | TP | FP | FN | Regressoes | TPR (recall) | Precisao | FPR bruto | F1 |\n")
+        fh.write("|---|---|---|---|---|---|---|---|---|\n")
         for r in rows_metrics:
-            fh.write(f"| {r['ferramenta']} | {r['TP']} | {r['FP']} | {r['FN']} | "
+            fh.write(f"| {r['ferramenta']} | {r['TP']} | {r['FP']} | {r['FN']} | {r['REGRESSOES']} | "
                      f"{r['TPR_recall']} | {r['precisao']} | {r['FPR_bruto']} | {r['F1']} |\n")
 
     print(f"[analyze] perfil={p}")
+    for nome in nao_executadas:
+        print(f"  {nome:8s} NAO EXECUTADA (arquivo de saida ausente) - fora das metricas")
     for r in rows_metrics:
-        print(f"  {r['ferramenta']:8s} TP={r['TP']} FP={r['FP']} FN={r['FN']} "
+        print(f"  {r['ferramenta']:8s} TP={r['TP']} FP={r['FP']} FN={r['FN']} REG={r['REGRESSOES']} "
               f"TPR={r['TPR_recall']} prec={r['precisao']} FPR={r['FPR_bruto']} F1={r['F1']}")
     print(f"[analyze] escrito: {mpath}\n           {cpath}\n           {mdpath}")
 

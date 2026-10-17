@@ -26,12 +26,14 @@ public class GatewaySecurityConfig {
 
     @Bean
     public SecurityWebFilterChain chain(ServerHttpSecurity http) {
-        http.csrf(ServerHttpSecurity.CsrfSpec::disable)
-            .cors(c -> c.configurationSource(corsSource()));
+        http.csrf(ServerHttpSecurity.CsrfSpec::disable);
 
+        // perfil vulneravel (enforce=false): sem CORS no gateway, para o cabecalho permissivo do
+        // target-service chegar ao cliente e a falha API8 ser observavel. Perfil protegido: CORS restrito.
         if (!enforce) {
             return http.authorizeExchange(e -> e.anyExchange().permitAll()).build();
         }
+        http.cors(c -> c.configurationSource(corsSource()));
         return http
             .authorizeExchange(e -> e
                 .pathMatchers("/api/auth/**", "/actuator/health",

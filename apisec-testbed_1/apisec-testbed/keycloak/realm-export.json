@@ -17,6 +17,8 @@
     {
       "username": "alice",
       "enabled": true,
+      "firstName": "Alice",
+      "lastName": "Teste",
       "emailVerified": true,
       "email": "alice@example.org",
       "credentials": [{ "type": "password", "value": "alice123", "temporary": false }],
@@ -25,6 +27,8 @@
     {
       "username": "bob",
       "enabled": true,
+      "firstName": "Bob",
+      "lastName": "Teste",
       "emailVerified": true,
       "email": "bob@example.org",
       "credentials": [{ "type": "password", "value": "bob123", "temporary": false }],
@@ -33,6 +37,8 @@
     {
       "username": "admin",
       "enabled": true,
+      "firstName": "Admin",
+      "lastName": "Teste",
       "emailVerified": true,
       "email": "admin@example.org",
       "credentials": [{ "type": "password", "value": "admin123", "temporary": false }],

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<OWASPZAPReport programName="ZAP" version="2.17.0" generated="Thu, 15 Oct 2026 14:09:25" created="2026-10-15T14:09:25.378840583Z">
+<OWASPZAPReport programName="ZAP" version="2.17.0" generated="Sat, 17 Oct 2026 19:33:29" created="2026-10-17T19:33:29.305490784Z">
 	
 		<site name="http://gateway:8080" host="gateway" port="8080" ssl="false">
 			<alerts>
@@ -10,34 +10,110 @@
 						<alert>SQL Injection</alert>
 						<name>SQL Injection</name>
 						<riskcode>3</riskcode>
-						<confidence>2</confidence>
-						<riskdesc>High (Medium)</riskdesc>
-						<confidencedesc>Medium</confidencedesc>
+						<confidence>1</confidence>
+						<riskdesc>High (Low)</riskdesc>
+						<confidencedesc>Low</confidencedesc>
 						<desc>&lt;p&gt;SQL injection may be possible.&lt;/p&gt;</desc>
 						<instances>
 							
 								<instance>
-									<uri>http://gateway:8080/api/products/search?q=q%27+AND+%271%27%3D%271%27+--+&amp;order=id</uri>
+									<uri>http://gateway:8080/api/products/search?q=%27&amp;order=id</uri>
 									<nodeName>http://gateway:8080/api/products/search (order,q)</nodeName>
 									<method>GET</method>
 									<param>q</param>
-									<attack>q&apos; OR &apos;1&apos;=&apos;1&apos; -- </attack>
-									<evidence></evidence>
-									<otherinfo>The page results were successfully manipulated using the boolean conditions [q&apos; AND &apos;1&apos;=&apos;1&apos; -- ] and [q&apos; OR &apos;1&apos;=&apos;1&apos; -- ]
-The parameter value being modified was stripped from the HTML output for the purposes of the comparison.
-Data was NOT returned for the original parameter.
-The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.</otherinfo>
+									<attack>&apos;</attack>
+									<evidence>HTTP/1.1 500 Internal Server Error</evidence>
+									<otherinfo></otherinfo>
 								</instance>
 							
 						</instances>
 						<count>1</count>
 						<systemic>false</systemic>
 						<solution>&lt;p&gt;Do not trust client side input, even if there is client side validation in place.&lt;/p&gt;&lt;p&gt;In general, type check all data on the server side.&lt;/p&gt;&lt;p&gt;If the application uses JDBC, use PreparedStatement or CallableStatement, with parameters passed by &apos;?&apos;&lt;/p&gt;&lt;p&gt;If the application uses ASP, use ADO Command Objects with strong type checking and parameterized queries.&lt;/p&gt;&lt;p&gt;If database Stored Procedures can be used, use them.&lt;/p&gt;&lt;p&gt;Do *not* concatenate strings into queries in the stored procedure, or use &apos;exec&apos;, &apos;exec immediate&apos;, or equivalent functionality!&lt;/p&gt;&lt;p&gt;Do not create dynamic SQL queries using simple string concatenation.&lt;/p&gt;&lt;p&gt;Escape all data received from the client.&lt;/p&gt;&lt;p&gt;Apply an &apos;allow list&apos; of allowed characters, or a &apos;deny list&apos; of disallowed characters in user input.&lt;/p&gt;&lt;p&gt;Apply the principle of least privilege by using the least privileged database user possible.&lt;/p&gt;&lt;p&gt;In particular, avoid using the &apos;sa&apos; or &apos;db-owner&apos; database users. This does not eliminate SQL injection, but minimizes its impact.&lt;/p&gt;&lt;p&gt;Grant the minimum database access that is necessary for the application.&lt;/p&gt;</solution>
-						<otherinfo>&lt;p&gt;The page results were successfully manipulated using the boolean conditions [q&apos; AND &apos;1&apos;=&apos;1&apos; -- ] and [q&apos; OR &apos;1&apos;=&apos;1&apos; -- ]&lt;/p&gt;&lt;p&gt;The parameter value being modified was stripped from the HTML output for the purposes of the comparison.&lt;/p&gt;&lt;p&gt;Data was NOT returned for the original parameter.&lt;/p&gt;&lt;p&gt;The vulnerability was detected by successfully retrieving more data than originally returned, by manipulating the parameter.&lt;/p&gt;</otherinfo>
+						<otherinfo></otherinfo>
 						<reference>&lt;p&gt;https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html&lt;/p&gt;</reference>
 						<cweid>89</cweid>
 						<wascid>19</wascid>
-						<sourceid>156</sourceid>
+						<sourceid>124</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>100000</pluginid>
+						<alertRef>100000-2</alertRef>
+						<alert>A Server Error response code was returned by the server</alert>
+						<name>A Server Error response code was returned by the server</name>
+						<riskcode>1</riskcode>
+						<confidence>3</confidence>
+						<riskdesc>Low (High)</riskdesc>
+						<confidencedesc>High</confidencedesc>
+						<desc>&lt;p&gt;A response code of 500 was returned by the server.&lt;/p&gt;&lt;p&gt;This may indicate that the application is failing to handle unexpected input correctly.&lt;/p&gt;&lt;p&gt;Raised by the &apos;Alert on HTTP Response Code Error&apos; script&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://gateway:8080/api/debug/error</uri>
+									<nodeName>http://gateway:8080/api/debug/error</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>500</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://gateway:8080/api/products/search?q=q&amp;order=http%3A%2F%2Fwww.google.com%2F</uri>
+									<nodeName>http://gateway:8080/api/products/search (order,q)</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>500</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>2</count>
+						<systemic>false</systemic>
+						<solution></solution>
+						<otherinfo></otherinfo>
+						<reference></reference>
+						<cweid>388</cweid>
+						<wascid>20</wascid>
+						<sourceid>14</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
+						<pluginid>90022</pluginid>
+						<alertRef>90022</alertRef>
+						<alert>Application Error Disclosure</alert>
+						<name>Application Error Disclosure</name>
+						<riskcode>1</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Low (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;This page contains an error/warning message that may disclose sensitive information like the location of the file that produced the unhandled exception. This information can be used to launch further attacks against the web application. The alert could be a false positive if the error message is found inside a documentation page.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://gateway:8080/api/debug/error</uri>
+									<nodeName>http://gateway:8080/api/debug/error</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>HTTP/1.1 500 Internal Server Error</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Review the source code of this page. Implement custom error pages. Consider implementing a mechanism to provide a unique error reference/identifier to the client (browser) while logging the details on the server side and not exposing them to the user.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference></reference>
+						<cweid>550</cweid>
+						<wascid>13</wascid>
+						<sourceid>14</sourceid>
 					</alertitem>
 				
 				
@@ -120,6 +196,40 @@ The vulnerability was detected by successfully retrieving more data than origina
 				
 				
 					<alertitem>
+						<pluginid>10023</pluginid>
+						<alertRef>10023</alertRef>
+						<alert>Information Disclosure - Debug Error Messages</alert>
+						<name>Information Disclosure - Debug Error Messages</name>
+						<riskcode>1</riskcode>
+						<confidence>2</confidence>
+						<riskdesc>Low (Medium)</riskdesc>
+						<confidencedesc>Medium</confidencedesc>
+						<desc>&lt;p&gt;The response appeared to contain common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure the list of common debug messages.&lt;/p&gt;</desc>
+						<instances>
+							
+								<instance>
+									<uri>http://gateway:8080/api/debug/error</uri>
+									<nodeName>http://gateway:8080/api/debug/error</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>Internal Server Error</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+						</instances>
+						<count>1</count>
+						<systemic>false</systemic>
+						<solution>&lt;p&gt;Disable debugging messages before pushing to production.&lt;/p&gt;</solution>
+						<otherinfo></otherinfo>
+						<reference></reference>
+						<cweid>1295</cweid>
+						<wascid>13</wascid>
+						<sourceid>14</sourceid>
+					</alertitem>
+				
+				
+					<alertitem>
 						<pluginid>100000</pluginid>
 						<alertRef>100000-1</alertRef>
 						<alert>A Client Error response code was returned by the server</alert>
@@ -154,8 +264,8 @@ The vulnerability was detected by successfully retrieving more data than origina
 							
 							
 								<instance>
-									<uri>http://gateway:8080/2220141745133129388</uri>
-									<nodeName>http://gateway:8080/2220141745133129388</nodeName>
+									<uri>http://gateway:8080/4011324752159280741</uri>
+									<nodeName>http://gateway:8080/4011324752159280741</nodeName>
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
@@ -187,8 +297,8 @@ The vulnerability was detected by successfully retrieving more data than origina
 							
 							
 								<instance>
-									<uri>http://gateway:8080/api/7011177891426212418</uri>
-									<nodeName>http://gateway:8080/api/7011177891426212418</nodeName>
+									<uri>http://gateway:8080/api/927095902347639114</uri>
+									<nodeName>http://gateway:8080/api/927095902347639114</nodeName>
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
@@ -203,7 +313,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -214,18 +324,18 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
-									<uri>http://gateway:8080/api/auth/5468118618323070509</uri>
-									<nodeName>http://gateway:8080/api/auth/5468118618323070509</nodeName>
+									<uri>http://gateway:8080/api/auth/1941015166312251101</uri>
+									<nodeName>http://gateway:8080/api/auth/1941015166312251101</nodeName>
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -236,7 +346,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -247,7 +357,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -258,18 +368,18 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
-									<uri>http://gateway:8080/api/debug/806012573931612381</uri>
-									<nodeName>http://gateway:8080/api/debug/806012573931612381</nodeName>
+									<uri>http://gateway:8080/api/debug/6577719258165495999</uri>
+									<nodeName>http://gateway:8080/api/debug/6577719258165495999</nodeName>
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -280,18 +390,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
-									<otherinfo></otherinfo>
-								</instance>
-							
-							
-								<instance>
-									<uri>http://gateway:8080/api/debug/error</uri>
-									<nodeName>http://gateway:8080/api/debug/error</nodeName>
-									<method>GET</method>
-									<param></param>
-									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -302,7 +401,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -352,8 +451,8 @@ The vulnerability was detected by successfully retrieving more data than origina
 							
 							
 								<instance>
-									<uri>http://gateway:8080/api/orders/1411966043972555106</uri>
-									<nodeName>http://gateway:8080/api/orders/1411966043972555106</nodeName>
+									<uri>http://gateway:8080/api/orders/8235575162850551110</uri>
+									<nodeName>http://gateway:8080/api/orders/8235575162850551110</nodeName>
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
@@ -368,7 +467,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -379,18 +478,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
-									<otherinfo></otherinfo>
-								</instance>
-							
-							
-								<instance>
-									<uri>http://gateway:8080/api/products/search?q=q&amp;order=http%3A%2F%2Fwww.google.com%2F</uri>
-									<nodeName>http://gateway:8080/api/products/search (order,q)</nodeName>
-									<method>GET</method>
-									<param></param>
-									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -401,7 +489,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -429,8 +517,8 @@ The vulnerability was detected by successfully retrieving more data than origina
 							
 							
 								<instance>
-									<uri>http://gateway:8080/v3/8118088746389339131</uri>
-									<nodeName>http://gateway:8080/v3/8118088746389339131</nodeName>
+									<uri>http://gateway:8080/v3/5586587112092340611</uri>
+									<nodeName>http://gateway:8080/v3/5586587112092340611</nodeName>
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
@@ -445,7 +533,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -456,7 +544,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -467,7 +555,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -478,7 +566,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -489,7 +577,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -500,7 +588,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -511,7 +599,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -522,7 +610,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -533,7 +621,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -544,7 +632,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -555,40 +643,40 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;5919382108256485925.owasp.org&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;3194452803013987495.owasp.org&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;5;URL=&apos;https://5919382108256485925.owasp.org&apos;&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;5;URL=&apos;https://3194452803013987495.owasp.org&apos;&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;5;URL=&apos;https://5919382108256485925.owasp.org/?John Doe&apos;&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;5;URL=&apos;https://3194452803013987495.owasp.org/?John Doe&apos;&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -599,7 +687,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -610,7 +698,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -621,7 +709,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -632,7 +720,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -643,7 +731,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -654,7 +742,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -665,7 +753,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -676,7 +764,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -687,7 +775,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -698,7 +786,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -709,7 +797,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -720,7 +808,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -731,7 +819,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -742,7 +830,18 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://gateway:8080/api/auth/login</uri>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;EJxZKUCFyKtKBolTaYjClHoowTNaWPtTAOSjVBRxaSjrhkhwTystHPRjHlXHDHhoySrQHOhhPWYZwopOGFELvqiBeoqNjkgvBEIjqpspKKujxxwTldcjIlVpVUGSMaeHinrAAbwprEseBMSXfZSySOaloNNQltywPOgcHKeTbQebTLjtZgKQTXvkioHycLxspZZbTiLdPfvAouTTUUTdpnsilIbxsrmOjFycaXqLRutTShntNVDopMshXTUijavJxRMHhvbeCqqCnDEktdPXJyspHWLYQCSGqyFqMYULRNYPiXwSfFhIppDEdPlsKRoYwsNYuhTphwKbwwIAiuoPECEmeFEFBUZUZrOXYdhseOOwPckgDfRgSZAUYFjqLTDLHyinbZOKiGXwmvgZohYrVuyyYQfGKdWniAKRtroULDrvjxvRIaPTTxsljMbJSauKuaVGlRJyBXSAQjqTqaSGOXQQlwRAjgMnbPwRyRmQYeryWGEEqpYpLixrRKOmdYK)</nodeName>
+									<method>POST</method>
+									<param></param>
+									<attack></attack>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -753,29 +852,18 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe AND 1=2 -- &quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe AND 1=1&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
-									<otherinfo></otherinfo>
-								</instance>
-							
-							
-								<instance>
-									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe OR 1=1 -- &quot;)</nodeName>
-									<method>POST</method>
-									<param></param>
-									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -786,7 +874,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -797,7 +885,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -808,7 +896,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -819,7 +907,18 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://gateway:8080/api/auth/login</uri>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe&apos; AND &apos;1&apos;=&apos;1&quot;)</nodeName>
+									<method>POST</method>
+									<param></param>
+									<attack></attack>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -830,29 +929,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
-									<otherinfo></otherinfo>
-								</instance>
-							
-							
-								<instance>
-									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe&apos; AND &apos;1&apos;=&apos;2&apos; -- &quot;)</nodeName>
-									<method>POST</method>
-									<param></param>
-									<attack></attack>
-									<evidence>403</evidence>
-									<otherinfo></otherinfo>
-								</instance>
-							
-							
-								<instance>
-									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe&apos; OR &apos;1&apos;=&apos;1&apos; -- &quot;)</nodeName>
-									<method>POST</method>
-									<param></param>
-									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -863,7 +940,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -874,7 +951,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -885,7 +962,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -896,7 +973,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -907,7 +984,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -918,7 +995,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -929,7 +1006,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -940,7 +1017,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -951,7 +1028,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -962,7 +1039,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -973,7 +1050,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -984,7 +1061,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -995,7 +1072,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1006,7 +1083,29 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://gateway:8080/api/auth/login</uri>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe\&quot; AND \&quot;1\&quot;=\&quot;1&quot;)</nodeName>
+									<method>POST</method>
+									<param></param>
+									<attack></attack>
+									<evidence>400</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://gateway:8080/api/auth/login</uri>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe\&quot; AND \&quot;1\&quot;=\&quot;1\&quot; -- &quot;)</nodeName>
+									<method>POST</method>
+									<param></param>
+									<attack></attack>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1017,7 +1116,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1028,7 +1127,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1039,7 +1138,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1050,7 +1149,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1061,7 +1160,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1072,7 +1171,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1083,7 +1182,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1094,29 +1193,29 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;Set-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;Set-cookie: Tamper=197aa6e4-954d-49a1-9480-21690e3218cf&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;URL=&apos;http://5919382108256485925.owasp.org&apos;&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;URL=&apos;http://3194452803013987495.owasp.org&apos;&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1127,7 +1226,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1138,7 +1237,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1149,7 +1248,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1160,7 +1259,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1171,18 +1270,18 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;\&quot;+response.write(193,942*665,742)+\&quot;&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;\&quot;+response.write(953,460*663,471)+\&quot;&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1193,7 +1292,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1204,7 +1303,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1215,7 +1314,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1226,7 +1325,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1237,73 +1336,73 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any?\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any?\nSet-cookie: Tamper=197aa6e4-954d-49a1-9480-21690e3218cf&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any?\r\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any?\r\nSet-cookie: Tamper=197aa6e4-954d-49a1-9480-21690e3218cf&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any?\r\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\r\n&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any?\r\nSet-cookie: Tamper=197aa6e4-954d-49a1-9480-21690e3218cf\r\n&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any\nSet-cookie: Tamper=197aa6e4-954d-49a1-9480-21690e3218cf&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any\r\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any\r\nSet-cookie: Tamper=197aa6e4-954d-49a1-9480-21690e3218cf&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any\r\nSet-cookie: Tamper=eba741d0-54bc-4519-a1b7-fd60e608789a\r\n&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;any\r\nSet-cookie: Tamper=197aa6e4-954d-49a1-9480-21690e3218cf\r\n&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1314,7 +1413,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1325,18 +1424,18 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;http://\\5919382108256485925.owasp.org&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;http://\\3194452803013987495.owasp.org&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1347,7 +1446,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1358,7 +1457,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1369,7 +1468,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1380,7 +1479,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1391,62 +1490,62 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;https://5919382108256485925%2eowasp%2eorg&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;https://3194452803013987495%2eowasp%2eorg&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;https://5919382108256485925.owasp.org&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;https://3194452803013987495.owasp.org&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;https://5919382108256485925.owasp.org/?John Doe&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;https://3194452803013987495.owasp.org/?John Doe&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;https://\\5919382108256485925.owasp.org&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;https://\\3194452803013987495.owasp.org&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;response.write(193,942*665,742)&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;response.write(953,460*663,471)&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1457,7 +1556,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1468,18 +1567,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
-									<otherinfo></otherinfo>
-								</instance>
-							
-							
-								<instance>
-									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;wKaGfXNqlDiqtZDnriYYhtpGnOsSgPBuwOgUXHBnGuKexiGHSrbiSQLNbrXRmZZmypUHXdBMhFfVWfoZVXIBKWCxAsdmnSnZiRErHtLSkYaPIaZPJCypvKDhxGSSkKxIsRXajLvxIUcTLjtywBMSRPQFPiCPlmmUtptpsjvhaOxiVwGFPamjbOSeNfHISyCcvqGyGAGraNZlQYmJSwtrEJBIqIyACcSSSdnMQTEnifcJetcqbdsCwQJJFLmhAYvvkCCRREYFUfDEjMfUQfDaokoKeRnwsAXoEZAKQGOyqYGbJWCbOAxqMunjuRRAfnksssepXRhCJvFGMipkNCUKgjOPAAvvGnZnUPRsaMRGvEqWBiMMqgMgnHfvcDNPhBkGxLCaCAhmxyhGjoHjroxTYnEdZGYQIOydhqWsnXJmtjZeeQmhLiYDApcrFkpjCDPxpEuFjpNLlIBeNaxvrpxbEORxikUdSfFelBPWauKtygRDeyUwjfsBGngJCkSwMmT)</nodeName>
-									<method>POST</method>
-									<param></param>
-									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1490,7 +1578,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1501,7 +1589,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1512,7 +1600,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1523,7 +1611,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1534,161 +1622,161 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj 5947*9212 zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj 1337*7693 zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj#set($x=6185*7022)${x}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj#set($x=9075*1243)${x}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj#{4452*3657}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj#{9395*3575}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj${6281*2329}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj${4835*2167}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj&lt;%=4334*7651%&gt;zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj&lt;%=5602*4892%&gt;zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj&lt;p th:text=\&quot;${1267*8801}\&quot;&gt;&lt;/p&gt;zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj&lt;p th:text=\&quot;${6724*9043}\&quot;&gt;&lt;/p&gt;zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{#9368*6383}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{#3370*8579}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{4282*7279}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{5033*5982}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{@9359*5290}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{@5669*6062}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{@math key=\&quot;6873\&quot; method=\&quot;multiply\&quot; operand=\&quot;8503\&quot;/}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{@math key=\&quot;3264\&quot; method=\&quot;multiply\&quot; operand=\&quot;9059\&quot;/}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{{23890|add:19810}}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{{1116*7135}}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{{7910*5364}}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{{24050|add:77900}}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{{=6436*2037}}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{{=4273*8566}}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
 							
 								<instance>
 									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{{print \&quot;5773\&quot; \&quot;4619\&quot;}}zj&quot;)</nodeName>
+									<nodeName>http://gateway:8080/api/auth/login ()(&quot;zj{{print \&quot;2538\&quot; \&quot;3913\&quot;}}zj&quot;)</nodeName>
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1699,7 +1787,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1710,7 +1798,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1721,7 +1809,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1732,7 +1820,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1743,7 +1831,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>400</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1754,7 +1842,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<method>POST</method>
 									<param></param>
 									<attack></attack>
-									<evidence>403</evidence>
+									<evidence>404</evidence>
 									<otherinfo></otherinfo>
 								</instance>
 							
@@ -1836,7 +1924,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 								</instance>
 							
 						</instances>
-						<count>155</count>
+						<count>153</count>
 						<systemic>false</systemic>
 						<solution></solution>
 						<otherinfo></otherinfo>
@@ -1860,8 +1948,8 @@ The vulnerability was detected by successfully retrieving more data than origina
 						<instances>
 							
 								<instance>
-									<uri>http://gateway:8080/api/orders</uri>
-									<nodeName>http://gateway:8080/api/orders</nodeName>
+									<uri>http://gateway:8080/api/debug/config</uri>
+									<nodeName>http://gateway:8080/api/debug/config</nodeName>
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
@@ -1873,6 +1961,17 @@ The vulnerability was detected by successfully retrieving more data than origina
 								<instance>
 									<uri>http://gateway:8080/api/orders/10</uri>
 									<nodeName>http://gateway:8080/api/orders/10</nodeName>
+									<method>GET</method>
+									<param></param>
+									<attack></attack>
+									<evidence>no-store</evidence>
+									<otherinfo></otherinfo>
+								</instance>
+							
+							
+								<instance>
+									<uri>http://gateway:8080/api/products</uri>
+									<nodeName>http://gateway:8080/api/products</nodeName>
 									<method>GET</method>
 									<param></param>
 									<attack></attack>
@@ -1902,17 +2001,6 @@ The vulnerability was detected by successfully retrieving more data than origina
 									<otherinfo></otherinfo>
 								</instance>
 							
-							
-								<instance>
-									<uri>http://gateway:8080/api/auth/login</uri>
-									<nodeName>http://gateway:8080/api/auth/login ()(&quot;John Doe&quot;)</nodeName>
-									<method>POST</method>
-									<param></param>
-									<attack></attack>
-									<evidence>no-store</evidence>
-									<otherinfo></otherinfo>
-								</instance>
-							
 						</instances>
 						<count>5</count>
 						<systemic>true</systemic>
@@ -1921,7 +2009,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 						<reference>&lt;p&gt;https://datatracker.ietf.org/doc/html/rfc7234&lt;/p&gt;&lt;p&gt;https://datatracker.ietf.org/doc/html/rfc7231&lt;/p&gt;&lt;p&gt;https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html&lt;/p&gt;</reference>
 						<cweid>524</cweid>
 						<wascid>13</wascid>
-						<sourceid>11</sourceid>
+						<sourceid>16</sourceid>
 					</alertitem>
 				
 			</alerts>
@@ -1936,7 +2024,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 					<site>http://gateway:8080</site>
 					<key>insight.code.2xx</key>
 					<description>Percentage of responses with status code 2xx</description>
-					<statistic>23</statistic>
+					<statistic>21</statistic>
 				</insight>
 			
 			
@@ -1946,7 +2034,17 @@ The vulnerability was detected by successfully retrieving more data than origina
 					<site>http://gateway:8080</site>
 					<key>insight.code.4xx</key>
 					<description>Percentage of responses with status code 4xx</description>
-					<statistic>76</statistic>
+					<statistic>51</statistic>
+				</insight>
+			
+			
+				<insight>
+					<level>Info</level>
+					<reason>Informational</reason>
+					<site>http://gateway:8080</site>
+					<key>insight.code.5xx</key>
+					<description>Percentage of responses with status code 5xx</description>
+					<statistic>27</statistic>
 				</insight>
 			
 			
@@ -1956,7 +2054,7 @@ The vulnerability was detected by successfully retrieving more data than origina
 					<site>http://gateway:8080</site>
 					<key>insight.endpoint.ctype.application/json</key>
 					<description>Percentage of endpoints with content type application/json</description>
-					<statistic>10</statistic>
+					<statistic>100</statistic>
 				</insight>
 			
 			
