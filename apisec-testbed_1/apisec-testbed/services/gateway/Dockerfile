@@ -12,5 +12,5 @@ COPY --from=build /build/target/gateway-1.0.0.jar app.jar
 USER app
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=3s --retries=12 \
-  CMD wget -qO- http://localhost:8080/actuator/health || exit 1
+  CMD wget -qO- http://localhost:${MANAGEMENT_SERVER_PORT:-8080}/actuator/health || exit 1
 ENTRYPOINT ["java","-XX:MaxRAMPercentage=75","-jar","/app/app.jar"]

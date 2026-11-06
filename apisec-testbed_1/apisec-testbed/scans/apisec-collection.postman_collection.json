@@ -109,6 +109,32 @@
         "method": "GET",
         "url": { "raw": "{{base_url}}/api/debug/config", "host": ["{{base_url}}"], "path": ["api","debug","config"] }
       }
+    },
+    {
+      "name": "CORS - origem de terceiro com credenciais",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const f = JSON.parse(pm.collectionVariables.get('findings'));",
+              "const acao = pm.response.headers.get('Access-Control-Allow-Origin');",
+              "const cred = pm.response.headers.get('Access-Control-Allow-Credentials');",
+              "const refletido = acao === 'https://evil.example' && cred === 'true';",
+              "if (refletido && !f.find(x=>x.id==='VULN-MISC-02'))",
+              "  f.push({tool:'postman', id:'VULN-MISC-02', route:'/api/products', class:'Security Misconfiguration - CORS permissivo', severity:'Medium'});",
+              "pm.collectionVariables.set('findings', JSON.stringify(f));",
+              "pm.test('CORS nao deve refletir origem de terceiro com credenciais', () => pm.expect(refletido, 'origem refletida com credenciais').to.be.false);",
+              "console.log('POSTMAN_FINDINGS_JSON=' + pm.collectionVariables.get('findings'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Origin", "value": "https://evil.example" }],
+        "url": { "raw": "{{base_url}}/api/products", "host": ["{{base_url}}"], "path": ["api","products"] }
+      }
     }
   ]
 }

@@ -40,3 +40,7 @@ management:
   metrics:
     tags:
       application: gateway
+    # buckets do histograma de latencia (necessarios para histogram_quantile no Prometheus)
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true

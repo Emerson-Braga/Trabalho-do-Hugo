@@ -45,6 +45,10 @@ management:
   metrics:
     tags:
       application: target-service
+    # buckets do histograma de latencia (necessarios para histogram_quantile no Prometheus)
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
 
 springdoc:
   api-docs:

@@ -38,28 +38,28 @@
     },
     {
       "type": "timeseries",
-      "title": "CPU por container (cores)",
+      "title": "CPU do processo por servico (fracao de 1 core)",
       "id": 3,
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
       "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{name=~\"apisec-.*\"}[1m]))",
+          "expr": "process_cpu_usage{job=~\"gateway|target-service\"}",
           "legendFormat": "{{name}}"
         }
       ]
     },
     {
       "type": "timeseries",
-      "title": "Memoria residente por container",
+      "title": "Heap da JVM por servico (bytes)",
       "id": 4,
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
       "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
       "targets": [
         {
           "refId": "A",
-          "expr": "container_memory_working_set_bytes{name=~\"apisec-.*\"}",
+          "expr": "sum by (job) (jvm_memory_used_bytes{area=\"heap\"})",
           "legendFormat": "{{name}}"
         }
       ]

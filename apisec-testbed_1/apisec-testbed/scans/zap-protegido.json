@@ -1,8 +1,8 @@
 {
 	"@programName": "ZAP",
 	"@version": "2.17.0",
-	"@generated": "Sat, 17 Oct 2026 19:24:18",
-	"created": "2026-10-17T19:24:18.203215480Z",
+	"@generated": "Fri, 6 Nov 2026 17:06:03",
+	"created": "2026-11-06T17:06:03.622910204Z",
 	"insights":[
 		{
 			"level": "Low",
@@ -35,14 +35,6 @@
 			"key": "insight.endpoint.total",
 			"description": "Count of total endpoints",
 			"statistic": "15"
-		},
-		{
-			"level": "Info",
-			"reason": "Informational",
-			"site": "http://gateway:8080",
-			"key": "insight.response.slow",
-			"description": "Percentage of slow responses",
-			"statistic": "1"
 		}
 	],
 	"site":[ 
@@ -73,7 +65,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "39",
+							"id": "41",
 							"uri": "http://gateway:8080/",
 							"nodeName": "http:\/\/gateway:8080\/",
 							"method": "GET",
@@ -84,8 +76,8 @@
 						},
 						{
 							"id": "1",
-							"uri": "http://gateway:8080/7674824821285218749",
-							"nodeName": "http:\/\/gateway:8080\/7674824821285218749",
+							"uri": "http://gateway:8080/6083281993660943654",
+							"nodeName": "http:\/\/gateway:8080\/6083281993660943654",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -93,7 +85,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "51",
+							"id": "53",
 							"uri": "http://gateway:8080/actuator/health",
 							"nodeName": "http:\/\/gateway:8080\/actuator\/health",
 							"method": "GET",
@@ -103,7 +95,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "24",
+							"id": "26",
 							"uri": "http://gateway:8080/computeMetadata/v1/",
 							"nodeName": "http:\/\/gateway:8080\/computeMetadata\/v1\/",
 							"method": "GET",
@@ -113,7 +105,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "20",
+							"id": "23",
 							"uri": "http://gateway:8080/latest/meta-data/",
 							"nodeName": "http:\/\/gateway:8080\/latest\/meta-data\/",
 							"method": "GET",
@@ -123,7 +115,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "32",
+							"id": "34",
 							"uri": "http://gateway:8080/metadata/instance",
 							"nodeName": "http:\/\/gateway:8080\/metadata\/instance",
 							"method": "GET",
@@ -133,7 +125,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "33",
+							"id": "35",
 							"uri": "http://gateway:8080/metadata/v1",
 							"nodeName": "http:\/\/gateway:8080\/metadata\/v1",
 							"method": "GET",
@@ -143,7 +135,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "26",
+							"id": "28",
 							"uri": "http://gateway:8080/opc/v1/instance/",
 							"nodeName": "http:\/\/gateway:8080\/opc\/v1\/instance\/",
 							"method": "GET",
@@ -153,7 +145,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "28",
+							"id": "30",
 							"uri": "http://gateway:8080/opc/v2/instance/",
 							"nodeName": "http:\/\/gateway:8080\/opc\/v2\/instance\/",
 							"method": "GET",
@@ -163,7 +155,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "34",
+							"id": "36",
 							"uri": "http://gateway:8080/openstack/latest/meta_data.json",
 							"nodeName": "http:\/\/gateway:8080\/openstack\/latest\/meta_data.json",
 							"method": "GET",
@@ -183,7 +175,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "40",
+							"id": "42",
 							"uri": "http://gateway:8080/v3/",
 							"nodeName": "http:\/\/gateway:8080\/v3\/",
 							"method": "GET",
@@ -194,8 +186,8 @@
 						},
 						{
 							"id": "2",
-							"uri": "http://gateway:8080/v3/5993610451193754498",
-							"nodeName": "http:\/\/gateway:8080\/v3\/5993610451193754498",
+							"uri": "http://gateway:8080/v3/7439213947998207766",
+							"nodeName": "http:\/\/gateway:8080\/v3\/7439213947998207766",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -213,7 +205,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "41",
+							"id": "43",
 							"uri": "http://gateway:8080/v3/api-docs/",
 							"nodeName": "http:\/\/gateway:8080\/v3\/api-docs\/",
 							"method": "GET",
@@ -243,7 +235,7 @@
 					"desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
 					"instances":[ 
 						{
-							"id": "61",
+							"id": "10",
 							"uri": "http://gateway:8080/v3/api-docs",
 							"nodeName": "http:\/\/gateway:8080\/v3\/api-docs",
 							"method": "GET",
@@ -260,7 +252,7 @@
 					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
 					"cweid": "524",
 					"wascid": "13",
-					"sourceid": "1"
+					"sourceid": "4"
 				}
 			]
 		}

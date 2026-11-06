@@ -1,5 +1,5 @@
 {
-  "_comment": "Gabarito das vulnerabilidades injetadas no perfil VULNERAVEL. Serve de referencia para o calculo de TPR/FPR: um alerta de ferramenta e True Positive se casar com um destes ids (por rota + classe), False Positive caso contrario. No perfil PROTEGIDO, o gabarito esperado e vazio (qualquer alerta de vuln injetada e regressao).",
+  "_comment": "Gabarito das vulnerabilidades injetadas no perfil VULNERAVEL. Serve de referencia para o calculo de TPR/FPR: um alerta de ferramenta e True Positive se casar com um destes ids (por rota + classe), False Positive caso contrario. No perfil PROTEGIDO, o gabarito esperado e vazio (qualquer alerta de vuln injetada e regressao). IDs de alerta do ZAP conferidos contra o log de regras executadas pelo proprio ZAP (ver results/zap-*.json).",
   "owasp_api_top10_ref": "https://owasp.org/API-Security/editions/2023/en/0x00-header/",
   "injected": [
     {
@@ -44,6 +44,29 @@
       "detectable_by": [
         "zap",
         "restest"
+      ],
+      "match_keywords": [
+        "sql",
+        "injection",
+        "sqli"
+      ]
+    },
+    {
+      "id": "VULN-SQLI-03",
+      "owasp": "API8:2023",
+      "cwe": "CWE-89",
+      "class": "SQL Injection (login)",
+      "route": "/api/auth/login",
+      "param": "username",
+      "evidence": "AuthController concatena username e password no SQL do login (ramo brokenAuth)",
+      "zap_alert_ids": [
+        40018,
+        40019,
+        40020,
+        40021
+      ],
+      "detectable_by": [
+        "zap"
       ],
       "match_keywords": [
         "sql",
@@ -98,10 +121,8 @@
       "class": "Broken Authentication - sem rate limit / lockout",
       "route": "/api/auth/login",
       "param": "password",
-      "evidence": "brute force sem bloqueio no perfil vulneravel",
-      "zap_alert_ids": [
-        10021
-      ],
+      "evidence": "brute force sem bloqueio no perfil vulneravel (teste por rajada, analysis/brute_force.py)",
+      "zap_alert_ids": [],
       "detectable_by": [
         "brute",
         "restest"
@@ -138,12 +159,8 @@
       "route": "/api/debug/config",
       "param": "-",
       "evidence": "vazamento de segredo JWT e variaveis de ambiente",
-      "zap_alert_ids": [
-        10015,
-        40035
-      ],
+      "zap_alert_ids": [],
       "detectable_by": [
-        "zap",
         "postman"
       ],
       "match_keywords": [
@@ -160,12 +177,13 @@
       "class": "Security Misconfiguration - CORS permissivo",
       "route": "*",
       "param": "-",
-      "evidence": "Access-Control-Allow-Origin refletido com credenciais",
+      "evidence": "Access-Control-Allow-Origin refletido com credenciais (confirmado com curl no target; checado pela colecao Postman)",
       "zap_alert_ids": [
         10098
       ],
       "detectable_by": [
-        "zap"
+        "zap",
+        "postman"
       ],
       "match_keywords": [
         "cors"

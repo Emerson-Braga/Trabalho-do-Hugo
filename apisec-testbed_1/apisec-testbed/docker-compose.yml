@@ -68,6 +68,8 @@ services:
       ERROR_STACKTRACE: ${ERROR_STACKTRACE:-always}
       ACTUATOR_EXPOSE:  ${ACTUATOR_EXPOSE:-*}
       JWT_SECRET:       ${JWT_SECRET:-}
+      # porta do actuator: igual ao servico (vulneravel, exposto no edge) ou 9001 interna (protegido)
+      MANAGEMENT_SERVER_PORT: ${SUT_MGMT_PORT:-8081}
     networks: [internal, telemetry]
     # NAO publica porta: so e alcancavel atraves do gateway.
     # Para a condicao "sem gateway", descomente a linha abaixo.
@@ -91,6 +93,7 @@ services:
       REDIS_HOST:       redis
       RATE_LIMIT_RPS:   ${RATE_LIMIT_RPS:-50}
       RATE_LIMIT_BURST: ${RATE_LIMIT_BURST:-100}
+      MANAGEMENT_SERVER_PORT: ${GW_MGMT_PORT:-8080}
     ports:
       - "8080:8080"          # unico ponto de entrada exposto as ferramentas
     networks: [edge, internal, telemetry]
@@ -109,7 +112,7 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=30d
     volumes:
-      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ${PROM_CONFIG:-./observability/prometheus.yml}:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     ports: ["9090:9090"]
     networks: [telemetry]

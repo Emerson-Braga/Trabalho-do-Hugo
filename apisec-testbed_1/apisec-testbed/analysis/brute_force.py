@@ -44,6 +44,7 @@ def main():
     ap.add_argument("--attempts", type=int, default=100)
     ap.add_argument("--workers", type=int, default=20)
     ap.add_argument("--results", default=os.path.join(here, "..", "results"))
+    ap.add_argument("--run", default="", help="sufixo da rodada (ex.: r1)")
     args = ap.parse_args()
 
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
@@ -70,7 +71,8 @@ def main():
         "achado": achado,
     }
     os.makedirs(args.results, exist_ok=True)
-    caminho = os.path.join(args.results, f"brute-force-{args.profile}.json")
+    sufixo = f"-{args.run}" if args.run else ""
+    caminho = os.path.join(args.results, f"brute-force-{args.profile}{sufixo}.json")
     with open(caminho, "w") as fh:
         json.dump(resultado, fh, indent=2)
         fh.write("\n")

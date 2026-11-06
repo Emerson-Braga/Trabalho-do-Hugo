@@ -8,7 +8,8 @@ perfil, as metricas da Etapa B do plano:
 
     TPR (recall) = TP / (TP + FN)         quantas das falhas injetadas foram detectadas
     Precisao     = TP / (TP + FP)         quantos alertas eram falhas reais
-    FPR bruto    = FP / (FP + TP)         proporcao de ruido no relatorio
+    FDR          = FP / (FP + TP)         taxa de falsas descobertas = 1 - precisao
+                                          (NAO e a FPR classica, que exige verdadeiros negativos)
     F1           = 2*P*R / (P+R)
 
 Casamento alerta<->gabarito: um alerta conta como TP se sua rota casa (normalizada,
@@ -19,7 +20,7 @@ Uso:
     python3 analyze.py --profile vulneravel --results ../results --gt ground_truth.json
 Saidas em results/:
     matriz-ferramenta-vulnerabilidade.csv   (cruzamento ferramenta x vuln, Etapa B)
-    metricas-acuracia.csv                    (TPR/FPR/precisao/F1 por ferramenta)
+    metricas-acuracia.csv                    (TPR/FDR/precisao/F1 por ferramenta)
     metricas-acuracia.md                     (mesma tabela em Markdown para o artigo)
 """
 import argparse, csv, json, os, re, sys, xml.etree.ElementTree as ET
@@ -93,18 +94,19 @@ def parse_brute(path):
              "name": "Broken Authentication - sem rate limit", "risk": "High"}]
 
 def parse_restest(path):
-    """Le results/restest-<perfil>.csv (uma linha por caso de teste)."""
+    """Le results/restest-<perfil>.csv gerado por analysis/restest_convert.py (uma linha por
+    operacao e codigo de falha). Sem atribuicao ao gabarito, o id vira NAO-ATRIBUIDO, que
+    nunca casa e conta como falso positivo."""
     out = []
     if not os.path.exists(path):
         return out
-    with open(path, newline="") as fh:
+    with open(path, newline="", encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
-            verdict = (row.get("oracleResult") or row.get("result") or "").lower()
-            if verdict in ("fail", "failed", "false", "vulnerable", "bypass"):
-                out.append({"tool": "restest",
-                            "route": row.get("path", row.get("endpoint", "")),
-                            "name": row.get("faultType", row.get("oracle", "")),
-                            "risk": row.get("severity", "")})
+            out.append({"tool": "restest",
+                        "id": row.get("id_gabarito") or "NAO-ATRIBUIDO",
+                        "route": row.get("rota", ""),
+                        "name": row.get("titulo", ""),
+                        "risk": row.get("severidade", "")})
     return out
 
 # ----------------------------------------------------------------- matching
@@ -193,7 +195,7 @@ def main():
             "ferramenta": tool, "perfil": p,
             "TP": tp, "FP": fp, "FN": fn, "REGRESSOES": regressoes,
             "TPR_recall": round(recall, 3), "precisao": round(prec, 3),
-            "FPR_bruto": round(fpr, 3), "F1": round(f1, 3),
+            "FDR": round(fpr, 3), "F1": round(f1, 3),
             "n_alertas": len(alerts),
         })
         for vid in exp:
@@ -219,18 +221,18 @@ def main():
     mdpath = os.path.join(R, f"metricas-acuracia-{p}.md")
     with open(mdpath, "w") as fh:
         fh.write(f"### Acuracia de deteccao - perfil {p}\n\n")
-        fh.write("| Ferramenta | TP | FP | FN | Regressoes | TPR (recall) | Precisao | FPR bruto | F1 |\n")
+        fh.write("| Ferramenta | TP | FP | FN | Regressoes | TPR (recall) | Precisao | FDR (1 - precisao) | F1 |\n")
         fh.write("|---|---|---|---|---|---|---|---|---|\n")
         for r in rows_metrics:
             fh.write(f"| {r['ferramenta']} | {r['TP']} | {r['FP']} | {r['FN']} | {r['REGRESSOES']} | "
-                     f"{r['TPR_recall']} | {r['precisao']} | {r['FPR_bruto']} | {r['F1']} |\n")
+                     f"{r['TPR_recall']} | {r['precisao']} | {r['FDR']} | {r['F1']} |\n")
 
     print(f"[analyze] perfil={p}")
     for nome in nao_executadas:
         print(f"  {nome:8s} NAO EXECUTADA (arquivo de saida ausente) - fora das metricas")
     for r in rows_metrics:
         print(f"  {r['ferramenta']:8s} TP={r['TP']} FP={r['FP']} FN={r['FN']} REG={r['REGRESSOES']} "
-              f"TPR={r['TPR_recall']} prec={r['precisao']} FPR={r['FPR_bruto']} F1={r['F1']}")
+              f"TPR={r['TPR_recall']} prec={r['precisao']} FDR={r['FDR']} F1={r['F1']}")
     print(f"[analyze] escrito: {mpath}\n           {cpath}\n           {mdpath}")
 
 if __name__ == "__main__":

@@ -9,13 +9,15 @@ no gateway e pelo Spring Security no servico.
 
 Usa apenas a biblioteca padrao (sem dependencias externas).
 """
-import argparse, csv, json, os, statistics, time, urllib.request, urllib.error
+import argparse, csv, json, os, statistics, time, urllib.parse, urllib.request, urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ROUTES = [
     ("GET", "/api/products", None),
     ("GET", "/api/products/search?q=roteador&order=name", None),
-    ("GET", "/api/orders/2", "AUTH"),
+    # pedido da propria alice: 200 nos dois perfis. O pedido 2 (do bob) daria 200 no vulneravel
+    # (BOLA) e 404 no protegido, ou seja, caminhos diferentes medidos como se fossem iguais.
+    ("GET", "/api/orders/1", "AUTH"),
 ]
 
 def one_request(base, method, path, token):
@@ -34,11 +36,21 @@ def one_request(base, method, path, token):
         code = -1
     return (time.perf_counter() - t0) * 1000.0, code
 
-def login(base, user="alice", pw="alice123"):
+def login(base, profile, user="alice", pw="alice123"):
+    """Token de alice. Protegido: Keycloak (unico emissor que o gateway e o target aceitam).
+    Vulneravel: login local. Sem o token certo, a rota autenticada mediria um 401."""
     try:
-        data = json.dumps({"username": user, "password": pw}).encode()
-        req = urllib.request.Request(base + "/api/auth/login", data=data, method="POST")
-        req.add_header("Content-Type", "application/json")
+        if profile == "protegido":
+            # Keycloak exposto no host em 8083; o iss do token e keycloak:8080 (KC_HOSTNAME fixo)
+            url = "http://localhost:8083/realms/apisec/protocol/openid-connect/token"
+            data = urllib.parse.urlencode({"grant_type": "password", "client_id": "apisec-client",
+                                           "username": user, "password": pw}).encode()
+            req = urllib.request.Request(url, data=data, method="POST")
+            req.add_header("Content-Type", "application/x-www-form-urlencoded")
+        else:
+            data = json.dumps({"username": user, "password": pw}).encode()
+            req = urllib.request.Request(base + "/api/auth/login", data=data, method="POST")
+            req.add_header("Content-Type", "application/json")
         with urllib.request.urlopen(req, timeout=10) as r:
             return json.loads(r.read()).get("access_token", "")
     except Exception:
@@ -57,10 +69,11 @@ def main():
     ap.add_argument("--profile", default="vulneravel")
     ap.add_argument("--concurrency", type=int, default=20)
     ap.add_argument("--duration", type=int, default=60)
+    ap.add_argument("--run", default="", help="sufixo da rodada (ex.: r1) para nao sobrescrever")
     ap.add_argument("--results", default=os.path.join(os.path.dirname(__file__), "..", "results"))
     args = ap.parse_args()
 
-    token = login(args.base)
+    token = login(args.base, args.profile)
     print(f"[loadtest] base={args.base} perfil={args.profile} token={'ok' if token else 'ausente'}")
 
     per_route = {f"{m} {p}": {"lat": [], "codes": {}} for m, p, _ in ROUTES}
@@ -71,7 +84,9 @@ def main():
         futures = {}
         while time.time() < end:
             for m, p, auth in ROUTES:
-                fut = ex.submit(one_request, args.base, m, p, token if auth else None)
+                # protegido: o gateway exige JWT em todas as rotas (exceto auth/health), entao o token vai em todas
+                com_token = auth or args.profile == "protegido"
+                fut = ex.submit(one_request, args.base, m, p, token if com_token else None)
                 futures[fut] = f"{m} {p}"
                 submitted += 1
             # colhe o que ja terminou para nao acumular
@@ -88,7 +103,8 @@ def main():
             per_route[key]["codes"][code] = per_route[key]["codes"].get(code, 0) + 1
 
     os.makedirs(args.results, exist_ok=True)
-    out = os.path.join(args.results, f"latencia-{args.profile}.csv")
+    sufixo = f"-{args.run}" if args.run else ""
+    out = os.path.join(args.results, f"latencia-{args.profile}{sufixo}.csv")
     with open(out, "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["rota", "n", "p50_ms", "p90_ms", "p95_ms", "p99_ms",

@@ -1,0 +1,70 @@
+# Contrato usado pelo RESTest: copia de openapi/target-api.yaml restrita as operacoes
+# que o gabarito atribui ao RESTest (login, produtos, pedidos). Os endpoints /api/debug/*
+# ficam de fora porque o gabarito os atribui so ao ZAP e ao Postman.
+# Todas as operacoes sao GET, exceto o login, que nao altera dados.
+openapi: 3.0.3
+info:
+  title: Target API (SUT) - escopo RESTest
+  version: 1.0.0
+servers:
+  - url: http://gateway:8080
+    description: via API Gateway (dentro da rede docker)
+paths:
+  /api/auth/login:
+    post:
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string, example: alice }
+                password: { type: string, example: alice123 }
+      responses:
+        "200": { description: OK }
+        "401": { description: Credenciais invalidas }
+  /api/products:
+    get:
+      operationId: listProducts
+      responses:
+        "200": { description: OK }
+  /api/products/search:
+    get:
+      operationId: searchProducts
+      parameters:
+        - { name: q,     in: query, schema: { type: string }, example: "roteador" }
+        - { name: order, in: query, schema: { type: string }, example: "name" }
+      responses:
+        "200": { description: OK }
+  /api/products/{id}:
+    get:
+      operationId: getProduct
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string }, example: "1" }
+      responses:
+        "200": { description: OK }
+  /api/orders:
+    get:
+      operationId: listOrders
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: OK }
+  /api/orders/{id}:
+    get:
+      operationId: getOrder
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer }, example: 2 }
+      responses:
+        "200": { description: OK }
+        "404": { description: Nao encontrado }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

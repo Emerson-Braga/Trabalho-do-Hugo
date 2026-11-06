@@ -111,6 +111,15 @@ Todo o ambiente é código: `docker-compose.yml`, `.env.*`, realm do Keycloak, s
 varredura e de análise. Publicar este diretório num repositório público (com os
 `results/` brutos) satisfaz o item de artefatos do plano.
 
+## Documentos de apoio
+
+- [`METRICAS.md`](METRICAS.md): unidade e fórmula de cada métrica (TPR, FDR, precisão, CPU, RAM, latência).
+- [`DEFEITOS-CONHECIDOS.md`](DEFEITOS-CONHECIDOS.md): defeitos de robustez do alvo que não fazem parte do gabarito e como afetam os resultados.
+- [`scans/restest/`](scans/restest): Dockerfile do RESTest (commit fixo), especificação restrita ao escopo e campanha.
+
+Os alvos `scan-brute` e `scan-restest` cobrem os testes de rajada e de fuzzing por contrato. O RESTest exige
+a stack do perfil no ar; use `SEED=2 make scan-restest PROFILE=protegido` para repetir com outra semente.
+
 ## Limitações metodológicas honestas
 
 - A comparação por popularidade de Mendes et al. e a comparação por eficácia daqui
